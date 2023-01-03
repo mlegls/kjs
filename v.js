@@ -1,5 +1,4 @@
 // util
-const _a = x => null == x || !x.length || typeof x == "string" && x.length == 1;  // atom
 const a = x => null== x || !x.length || typeof x == "string";
 const b = x => x ? 1 : 0;                                                         // bool to int
 const c = x => typeof x == "string" ? x.charCodeAt(0) : x;                        // char arithmetic
@@ -7,19 +6,18 @@ const cmp = (x, y) => x > y ? 1 : x < y ? -1 : 0;                               
 const cp2 = (a, b) => [].concat(...a.map(d => b.map(e => [].concat(d, e))));      // pairwise cartesian product
 const cp = (x, y, ...z) => (y ? cp(cp2(x, y), ...z) : x);                         // cartesian product
 const t = x => x[0].map((c, i) => x.map(r => r[i]));                              // transpose
-const _vv = x => !a(x) ? typeof x == "string" ? x.split("") : x : [x];            // vectorize
 const vv = x => !a(x) ? x : [x];
 const vv2 = x => !a(x) ? x.map(e => vv(e)) : [[x]];                               // vectorize 2 layers
-const bv1 = (f, x) => a(x) ? f(x) : vv(x).map(n => bv1(f, n));                    // broadcast monadic
-const bv = (f, x, y) =>                                                           // broadcast
+const bv1 = (f, x) => a(x) ? f(x) : x.map(n => bv1(f, n));
+const bv = (f, x, y) =>                                                          // broadcast
   a(x) && a(y) ? f(x, y) :
-    a(x) ? vv(y).map(n => bv(f, x, n)) :
-    a(y) ? vv(x).map(n => bv(f, n, y)) :
-    x.length == 1 ? vv(y).map(n => bv(f, x[0], n)) :
-    y.length == 1 ? vv(x).map(n => bv(f, n, y[0])) : 
-    x.length == y.length ? vv(x).map((n, i) => bv(f, n, y[i])) :
+    a(x) ? y.map(n => bv(f, x, n)) :
+    a(y) ? x.map(n => bv(f, n, y)) :
+    x.length == 1 ? y.map(n => bv(f, x[0], n)) :
+    y.length == 1 ? x.map(n => bv(f, n, y[0])) : 
+    x.length == y.length ? x.map((n, i) => bv(f, n, y[i])) :
     (() => {throw new Error("length")})()
-const str = x => {                                                                // consecutive chars are strings
+const str = x => {                                                                // consecutive chars to strings
   let res = [], buf = [], pb = () => buf.length && res.push(buf.join("")),
     pe = e => { pb(); buf = []; res.push(e); }
   x.forEach(e => !e.length || (typeof e == "string" && e.length > 1) ? 
