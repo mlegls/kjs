@@ -1,12 +1,14 @@
 // util
-const a = x => null == x || !x.length || (typeof x == "string" && x.length == 1); // atom
+const _a = x => null == x || !x.length || typeof x == "string" && x.length == 1;  // atom
+const a = x => null== x || !x.length || typeof x == "string";
 const b = x => x ? 1 : 0;                                                         // bool to int
 const c = x => typeof x == "string" ? x.charCodeAt(0) : x;                        // char arithmetic
 const cmp = (x, y) => x > y ? 1 : x < y ? -1 : 0;                                 // compare
 const cp2 = (a, b) => [].concat(...a.map(d => b.map(e => [].concat(d, e))));      // pairwise cartesian product
 const cp = (x, y, ...z) => (y ? cp(cp2(x, y), ...z) : x);                         // cartesian product
 const t = x => x[0].map((c, i) => x.map(r => r[i]));                              // transpose
-const vv = x => !a(x) ? typeof x == "string" ? x.split("") : x : [x];             // vectorize
+const _vv = x => !a(x) ? typeof x == "string" ? x.split("") : x : [x];            // vectorize
+const vv = x => !a(x) ? x : [x];
 const vv2 = x => !a(x) ? x.map(e => vv(e)) : [[x]];                               // vectorize 2 layers
 const bv1 = (f, x) => a(x) ? f(x) : vv(x).map(n => bv1(f, n));                    // broadcast monadic
 const bv = (f, x, y) =>                                                           // broadcast
@@ -55,7 +57,7 @@ const umt = x => [...Array(x).keys()]                                           
   .map(i => [].concat(Array(i).fill(0), 1, Array(x-i-1).fill(0)));
 const grp = x => vv(x).reduce((t, e) => { t[e] ? t[e]++ : t[e] = 1; return t }, {});      // =
 const eql = (x, y) => bv((x, y) => b(x === y), x, y);                                     // =
-const not = x => bv1(x => b(!x), x)                                                       // ~
+const not = x => bv1(x => b(!x), x);                                                      // ~
 const mch = (x, y) => b(eq(x, y));                                                        // ~
 
 const assert = require("assert");
