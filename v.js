@@ -26,10 +26,10 @@ const c2s = x=> {                                                        // cons
     pe(e): e.length==1? buf.push(e): pe(c2s(e))); pb(); 
   return res.map(e=> e.length==1&&typeof e[0]=="string"? e[0]: e);
 }
-const eq= (x,y)=> x===y || !a(x) && x.length==y.length                    // deep equality
+const eq= (x,y)=> x===y || !a(x) && x.length==y.length                   // deep equality
   && vv(x).every((e,i)=> eq(e, y[i]));
-const fl= x=> a(x)? x: [].concat(...x.map(e=> a(e)? e: fl(e)));           // flatten
-const z= (x,y)=> x.map((e,i)=> [e,y[i]]);                                 // zip
+const fl= x=> a(x)? x: [].concat(...x.map(e=> a(e)? e: fl(e)));          // flatten
+const z= (x,y)=> x.map((e,i)=> [e,y[i]]);                                // zip
 
 // adverbs
 const e= f=> x=> x.map(f);                                                  // '
@@ -145,19 +145,19 @@ const cal= (x,y)=> typeof x==="function"?x(y): x[y];                            
 const apl= (x,y)=> typeof x==="function"?x(...y): x(...y);                          // .
 
 // multi-adic
-const amd= (x,y,f)=> {let r=x.slice();r[y]=f(r[y]);return r}                  // @
-const am2= (x,y,f,z)=> {let r=x.slice();r[y]=f(r[y],z);return r}              // @
+const amd= (x,y,f)=> {let r=x.slice();r[y]=f(r[y]);return r}                        // @
+const am2= (x,y,f,z)=> {let r=x.slice();r[y]=f(r[y],z);return r}                    // @
 // drill into nested array
-const drl= (x,y,f)=> {                                                        // .
+const drl= (x,y,f)=> {                                                              // .
   let r=x.slice(), a=y.slice(0,-1).reduce((e,i)=>e[i],r);
   a[y[y.length-1]]=f(a[y[y.length-1]]); return r;
 }
-const dr2= (x,y,f,z)=> {                                                      // .
+const dr2= (x,y,f,z)=> {                                                            // .
   let r=x.slice(), a=y.slice(0,-1).reduce((e,i)=>e[i],r);
   a[y[y.length-1]]=f(a[y[y.length-1]],z); return r;
 }
-const tr= (f,y,g)=> {try {return f(y)} catch(e) {return g(e)}}                // .
-const spl= (x,y,z)=> x.slice(0,y[0]).concat(z).concat(x.slice(y[1]))          // ?
+const tr= (f,y,g)=> {try {return f(y)} catch(e) {return g(e)}}                      // .
+const spl= (x,y,z)=> x.slice(0,y[0]).concat(z).concat(x.slice(y[1]))                // ?
 
 // tests
 const assert = require("assert");
