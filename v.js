@@ -13,8 +13,8 @@ const bv= (f,x,y)=>                                                      // broa
   a(x)&&a(y)? f(x,y):
     a(x)? y.map(n=>bv(f,x,n)):
     a(y)? x.map(n=>bv(f,n,y)):
-    x.length==1? y.map(n=>bv(f,x[0],n)):
-    y.length==1? x.map(n=>bv(f,n,y[0])): 
+    // x.length==1? y.map(n=>bv(f,x[0],n)):   // unbased
+    // y.length==1? x.map(n=>bv(f,n,y[0])): 
     x.length==y.length? x.map((n,i)=>bv(f,n,y[i])):
     (()=> {throw new Error("length")})();
 const sv= (f,x)=>                                                        // js string op
@@ -42,17 +42,17 @@ const dec= (x,y) => {                                                       // /
 const sc= f=> (x,y=undefined)=> x.map(e=>y=y===undefined? e: f(y,e));       // \
 const sp= (x,y)=> sv(y=>y.split(x), y);                                     // \
 const enc= (x,y)=> x.reverse()                                              // \
-  .reduce((a,b)=>{a.unshift(y%b);y=Math.floor(y/b);return a},[]);
+  .reduce((a,b)=>{a.unshift(y%b);y=Math.floor(y/b);return a;},[]);
 const ep= f=> x=> z(x, [null,...x]).map(e=>f(e[0],e[1]));                   // ':
 const er= f=> (x,y)=> y.map(e=>f(e,x));                                     // /:
 const el= f=> (x,y)=> x.map(e=>f(e,y));                                     // \:       
-const f= (f, n)=> x=> {for(let i=0; i<n; i++)x=f(x); return x};             // i f/
+const f= (f, n)=> x=> {for(let i=0; i<n; i++)x=f(x); return x;}             // i f/
 const fsc= (f, n)=> x=> {
   let a=[x]; for(let i=0; i<n; i++){x=f(x);a.push(x)}; return a;
 }            
-const w= (f, g)=> x=> {while(g(x))x=f(x); return x};                        // f f/   
+const w= (f, g)=> x=> {while(g(x))x=f(x); return x;}                        // f f/   
 const wsc= (f, g)=> x=> {                                                   // f f\
-  let a=[x]; while(g(x)){x=f(x);a.push(x)}; return a;
+  let a=[x]; while(g(x)){x=f(x);a.push(x);} return a;
 }
 const cvg= f=> x=> {                                                        // f/
   let a=f(x), b; while (!eq(a,b)&&!eq(a,x)) {b=a; a=f(a);} return a;
@@ -66,7 +66,7 @@ const wd= (x,y)=> y.reduce((a,_,i,r)=> i+x>r.length? a:                     // i
 const st= (f,n)=> x=> x.reduce((a,_,i,r)=> i+n>r.length? a:                 // i f':
   a.concat([f(r.slice(i,i+n))]),[]);
 const bin= x=> y=> bv1(e=>{                                                 // X'
-  for(let i=0; i<x.length; i++){if(e<x[i])return i-1}; return x.length-1
+  for(let i=0; i<x.length; i++){if(e<x[i])return i-1;} return x.length-1;
 },y);
 
 // verbs
@@ -131,7 +131,8 @@ const flt= (f,y)=> y.filter(!f);                                                
 const str= x=> bv1(x=>x.toString(), x);                                             // $
 const pad= (x,y)=> sv(x=>x>0? y.padEnd(x): y.padStart(-x),x)                        // $
 const cst= (x,y)=>                                                                  // $
-  x==="c"? String.fromCharCode(y): x==="i"? sv(parseInt, y): x==="f"? sv(parseFloat, y):
+  x==="c"? String.fromCharCode(y): 
+    x==="i"? sv(parseInt, y): x==="f"? sv(parseFloat, y):
     x==="`"? y.join(""): x==="s"? y.split(""): 
     (()=> {throw new Error("invalid type")})();
 const unq= x=> [...new Set(vv(x))];                                                 // ?
@@ -166,7 +167,7 @@ assert.deepStrictEqual(r([1, 2, 3], [4, 5, 6]), [4, 5, 6]);
 assert.deepStrictEqual(add([1, 2, 3], [4, 5, 6]), [5, 7, 9]);
 assert.deepStrictEqual(add([1, 2, 3], [4]), [5, 6, 7]);
 assert.deepStrictEqual(add([1], [4, 5, 6]), [5, 6, 7]);
-assert.throws(() => add([1, 2, 3], [4, 5]), Error)
+assert.throws(() => add([1, 2, 3], [4, 5]), Error);
 assert.deepStrictEqual(neg([1, 2, 3]), [-1, -2, -3]);
 assert.deepStrictEqual(flp([1, 2, 3]), [[1, 2, 3]]);
 assert.deepStrictEqual(flp([[1, 2], [3, 4]]), [[1, 3], [2, 4]]);
