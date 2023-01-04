@@ -16,7 +16,7 @@ const bv= (f,x,y)=>                                                      // broa
     x.length==1? y.map(n=>bv(f,x[0],n)):
     y.length==1? x.map(n=>bv(f,n,y[0])): 
     x.length==y.length? x.map((n,i)=>bv(f,n,y[i])):
-    (()=> {throw new Error("length")})()
+    (()=> {throw new Error("length")})();
 const sv= (f,x)=>                                                        // js string op
   bv1(x=>typeof x=="string"? x.split(""): x, f(x.join("")));                               
 const c2s = x=> {                                                        // consecutive chars to strings
@@ -29,8 +29,10 @@ const c2s = x=> {                                                        // cons
 const eq= (x,y)=> x===y || !a(x) && x.length==y.length                    // deep equality
   && vv(x).every((e,i)=> eq(e, y[i]));
 const fl= x=> a(x)? x: [].concat(...x.map(e=> a(e)? e: fl(e)));           // flatten
+const z= (x,y)=> x.map((e,i)=> [e,y[i]]);                                 // zip
 
 // operators
+const e= f=> x=> x.map(f);                                                  // '
 const rd= f=> (x,y=undefined)=> y===undefined? x.reduce(f): x.reduce(f, y)  // /
 const jn= (x,y)=> sv(y=>y.join(x), y);                                      // /
 const dec= (x,y) => {                                                       // /
@@ -41,6 +43,17 @@ const sc= f=> (x,y=undefined)=> x.map(e=>y=y===undefined? e: f(y,e));       // \
 const sp= (x,y)=> sv(y=>y.split(x), y);                                     // \
 const enc= (x,y)=> x.reverse()                                              // \
   .reduce((a,b)=>{a.unshift(y%b);y=Math.floor(y/b);return a},[]);
+const ep= f=> x=> z(x, [null,...x]).map(e=>f(e[0],e[1]));                   // ':
+const er= f=> (x,y)=> y.map(e=>f(e,x));                                     // /:
+const el= f=> (x,y)=> x.map(e=>f(e,y));                                     // \:       
+const f= (f, n) => x=> {for(let i=0; i<n; i++)x=f(x); return x};            // i f/
+const fsc= (f, n) => x=> {                                                  // i f\
+  let a=[x]; for(let i=0; i<n; i++){x=f(x);a.push(x)}; return a
+}            
+const w= (f, g) => x=> {while(g(x))x=f(x); return x};                       // f f/   
+const wsc= (f, g) => x=> {                                                  // f f\
+  let a=[x]; while(g(x)){x=f(x);a.push(x)}; return a
+}
 
 // verbs
 const s= x=> x;                                                                     // ::
