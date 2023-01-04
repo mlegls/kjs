@@ -144,6 +144,21 @@ const fnd= (x,y)=> bv1(x=>y.indexOf(x), x);                                     
 const cal= (x,y)=> typeof x==="function"?x(y): x[y];                                // @
 const apl= (x,y)=> typeof x==="function"?x(...y): x(...y);                          // .
 
+// multi-adic
+const amd= (x,y,f)=> {let r=x.slice();r[y]=f(r[y]);return r}                  // @
+const am2= (x,y,f,z)=> {let r=x.slice();r[y]=f(r[y],z);return r}              // @
+// drill into nested array
+const drl= (x,y,f)=> {                                                        // .
+  let r=x.slice(), a=y.slice(0,-1).reduce((e,i)=>e[i],r);
+  a[y[y.length-1]]=f(a[y[y.length-1]]); return r;
+}
+const dr2= (x,y,f,z)=> {                                                      // .
+  let r=x.slice(), a=y.slice(0,-1).reduce((e,i)=>e[i],r);
+  a[y[y.length-1]]=f(a[y[y.length-1]],z); return r;
+}
+const tr= (f,y,g)=> {try {return f(y)} catch(e) {return g(e)}}                // .
+const spl= (x,y,z)=> x.slice(0,y[0]).concat(z).concat(x.slice(y[1]))          // ?
+
 // tests
 const assert = require("assert");
 assert.deepStrictEqual(s([1, 2, 3]), [1, 2, 3]);
@@ -158,7 +173,7 @@ assert.deepStrictEqual(flp([[1, 2], [3, 4]]), [[1, 3], [2, 4]]);
 
 // export adverbs & verbs
 module.exports = {
-  e, rd, jn, dec, sc, sp, enc, ep, er, el, f, fsc, w, wsc, cvg, csc, wd, st, bin
+  e, rd, jn, dec, sc, sp, enc, ep, er, el, f, fsc, w, wsc, cvg, csc, wd, st, bin,
   s, r, flp, neg, add, sub, fst, mul, srt, div, od, k, nsk, d, dm, wh, 
   min, rev, max, asc, lt, dsc, gt, grp, umt, eql, not, mch, enl, cat, 
   nul, fll, wo, l, tk, dtk, rs, rep, flr, lcs, drp, del, cut, flt, 
