@@ -177,5 +177,5 @@ module.exports = {
   s, r, flp, neg, add, sub, fst, mul, srt, div, od, k, nsk, d, dm, wh, 
   min, rev, max, asc, lt, dsc, gt, grp, umt, eql, not, mch, enl, cat, 
   nul, fll, wo, l, tk, dtk, rs, rep, flr, lcs, drp, del, cut, flt, 
-  str, pad, cst, unq, rnd, fnd, cal, apl
+  str, pad, cst, unq, rnd, fnd, cal, apl, amd, am2, drl, dr2, tr, spl
 };
