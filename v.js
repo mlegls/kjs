@@ -17,7 +17,8 @@ const bv= (f,x,y)=>                                                      // broa
     y.length==1? x.map(n=>bv(f,n,y[0])): 
     x.length==y.length? x.map((n,i)=>bv(f,n,y[i])):
     (()=> {throw new Error("length")})()
-const str = x=> {                                                         // consecutive chars to strings
+const sv= (f,x)=> typeof (x=f(x.join("")))=="string"? x.split(""): x;     // js string op
+const c2s = x=> {                                                         // consecutive chars to strings
   let res=[], buf=[], pb= ()=>buf.length&&res.push(buf.join("")),
     pe= e=>{pb(); buf=[]; res.push(e);}
   x.forEach(e=> !e.length || typeof e=="string"&&e.length>1? pe(e): 
@@ -90,6 +91,13 @@ const drp= (x,y)=> x>0? y.slice(x): y.slice(0,x)                                
 const del= (x,y)=> x.slice(0,y).concat(x.slice(y+1||x.length));                     // _, like tk, drp for y<0
 const cut= (x,y)=> x.map((e,i)=>y.slice(e,x[i+1]||y.length));                       // _
 const flt= (f,y)=> y.filter(!f);                                                    // _
+const str= x=> bv1(x=>x.toString(), x);                                             // $
+const pad= (x,y)=> sv(x=>x>0? y.padEnd(x): y.padStart(-x),x)                        // $
+const cst= (x,y)=>                                                                  // $
+  x==="c"? String.fromCharCode(y): x==="i"? sv(parseInt, y): x==="f"? sv(parseFloat, y):
+    x==="`"? y.join(""): x==="s"? y.split(""): 
+    (()=> {throw new Error("invalid type")})();
+
 
 const assert = require("assert");
 assert.deepStrictEqual(s([1, 2, 3]), [1, 2, 3]);
