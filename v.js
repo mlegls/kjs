@@ -68,15 +68,20 @@ const nul= x=> bv1(x=>b(null==x), x);                                           
 const fll= (x,y)=> bv1(y=> null==y? x: y, y);                                       // ^
 const wo = (x,y)=> x.filter(e=> !vv(y).includes(e))                                 // ^
 const l= x=> x.length;                                                              // #
+const tk = (x,y)=> x>0? y.slice(0,x): y.slice(x);                                   // #
 const rs= (x,y)=> {                                                                 // #
-  let s=vv(x).slice(), l=rd(mul)(vv(x)), i=vv(x).indexOf(null), 
-    a=fl(vv(y)), ll=a.length, r=Array(l), t;
-  i>=0 && ll%l===0 && (s[i]=ll/l);
+  let s=vv(x).slice(), l=rd((x,y)=>!y? x: x*y)(vv(s)), 
+    a=fl(vv(y)), ll=a.length, r=Array(l), t, i=s.indexOf(null);
+  if (i>=0) {s[i]=Math.ceil(ll/(l=l||1)); l*=s[i];}
   for (let c=0; c<l; c++) r[c]=a[c%ll];
   for (let i=s.length-1; i>=0; i--) {
     const j=s[i]; t=[];
-    for (let k=0; k<r.length/j; k++) t.push(r.slice(k*j,(k+1)*j)); r=t;
-  } return r[0];
+    for (let k=0; k<r.length/(j||1); k++) t.push(r.slice(k*j,(k+1)*j)); r=t;
+  } return r[0] || [];
+}
+const rep= (f,y)=> {                                                                // #
+  let x=f(y), s=x.length===y.length? x: bv1(f, y);                                  
+  return [].concat(...s.map((e,i)=> Array(b(e)).fill(y[i])));
 }
 
 const assert = require("assert");
