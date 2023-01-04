@@ -21,13 +21,13 @@ const str = x=> {                                                         // con
   let res=[], buf=[], pb= ()=>buf.length&&res.push(buf.join("")),
     pe= e=>{pb(); buf=[]; res.push(e);}
   x.forEach(e=> !e.length || typeof e=="string"&&e.length>1? pe(e): 
-    e.length==1? buf.push(e): pe(str(e))); pb(); return res;}
+    e.length==1? buf.push(e): pe(str(e))); pb(); return res;
+}
 const eq= (x,y)=> x===y || !a(x) && x.length==y.length                    // deep equality
   && vv(x).every((e,i)=> eq(e, y[i]));
-const fl = x=> a(x)? x: [].concat(...x.map(e=> a(e)? e: fl(e)));          // flatten
+const fl= x=> a(x)? x: [].concat(...x.map(e=> a(e)? e: fl(e)));           // flatten
 
 // operators
-// reduce
 const rd= f=> (x,y=undefined)=> y===undefined? x.reduce(f): x.reduce(f, y)  // /
 const sc= f=> (x,y=undefined)=> x.map(e=>y=y===undefined? e: f(y,e));       // \
 
@@ -68,7 +68,8 @@ const nul= x=> bv1(x=>b(null==x), x);                                           
 const fll= (x,y)=> bv1(y=> null==y? x: y, y);                                       // ^
 const wo = (x,y)=> x.filter(e=> !vv(y).includes(e))                                 // ^
 const l= x=> x.length;                                                              // #
-const tk = (x,y)=> x>0? y.slice(0,x): y.slice(x);                                   // #
+const tk= (x,y)=> x>0? y.slice(0,x): y.slice(x);                                    // #
+const dtk= (x,y)=> bv1(x=> y[x], x);                                                // #
 const rs= (x,y)=> {                                                                 // #
   let s=vv(x).slice(), l=rd((x,y)=>!y? x: x*y)(vv(s)), 
     a=fl(vv(y)), ll=a.length, r=Array(l), t, i=s.indexOf(null);
@@ -83,6 +84,12 @@ const rep= (f,y)=> {                                                            
   let x=f(y), s=x.length===y.length? x: bv1(f, y);                                  
   return [].concat(...s.map((e,i)=> Array(b(e)).fill(y[i])));
 }
+const flr= x=> bv1(x=>Math.floor(x), x);                                            // _
+const lcs= x=> bv1(x=>x.toLowerCase(), x);                                          // _
+const drp= (x,y)=> x>0? y.slice(x): y.slice(0,x)                                    // _
+const del= (x,y)=> x.slice(0,y).concat(x.slice(y+1||x.length));                     // _, like tk, drp for y<0
+const cut= (x,y)=> x.map((e,i)=>y.slice(e,x[i+1]||y.length));                       // _
+const flt= (f,y)=> y.filter(!f);                                                    // _
 
 const assert = require("assert");
 assert.deepStrictEqual(s([1, 2, 3]), [1, 2, 3]);
@@ -98,5 +105,6 @@ assert.deepStrictEqual(flp([[1, 2], [3, 4]]), [[1, 3], [2, 4]]);
 module.exports = {
   s, r, flp, neg, add, sub, fst, mul, srt, div, 
   od, k, nsk, d, dm, wh, min, rev, max, asc, lt, dsc, gt,
-  grp, umt, eql, not, mch, enl, cat, nul, fll, wo
+  grp, umt, eql, not, mch, enl, cat, nul, fll, wo, l, tk, dtk, rs, rep,
+  flr, lcs, drp, del, cut, flt
 };
