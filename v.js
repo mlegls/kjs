@@ -47,7 +47,7 @@ const od= v=> cp(...vv(v).map(n => [...Array(n).keys()]));                      
 const k= Object.keys;                                                               // !
 const nsk= x=> x.map(e=> Object.keys(e));                                           // !, ns
 const d= (x,y)=> Object.fromEntries(x.map((k,i)=> [k,y[i]]));                       // !
-const dm= (x,y)=> x<0? Math.floor(y/x): y%x;                                        // i!I, div or mod
+const dm= (x,y)=> x>0? y%x: Math.floor(y/x);                                        // i!I, div or mod
 const wh= x=> [].concat(...vv(x).map((e,i)=> e.length? [wh(e)]: Array(e).fill(i))); // &
 const min= (x,y)=> bv((x,y)=>Math.min(x,y), x, y);                                  // &
 const rev= x=> vv(x).reverse();                                                     // |
@@ -74,12 +74,12 @@ const dtk= (x,y)=> bv1(x=> y[x], x);                                            
 const rs= (x,y)=> {                                                                 // #
   let s=vv(x).slice(), l=rd((x,y)=>!y? x: x*y)(vv(s)), 
     a=fl(vv(y)), ll=a.length, r=Array(l), t, i=s.indexOf(null);
-  if (i>=0) {s[i]=Math.ceil(ll/(l=l||1)); l*=s[i];}
-  for (let c=0; c<l; c++) r[c]=a[c%ll];
-  for (let i=s.length-1; i>=0; i--) {
+  if(i>=0){s[i]=Math.ceil(ll/(l=l||1)); l*=s[i];}
+  for(let c=0; c<l; c++)r[c]=a[c%ll];
+  for(let i=s.length-1; i>=0; i--){
     const j=s[i]; t=[];
-    for (let k=0; k<r.length/(j||1); k++) t.push(r.slice(k*j,(k+1)*j)); r=t;
-  } return r[0] || [];
+    for(let k=0; k<r.length/(j||1); k++)t.push(r.slice(k*j,(k+1)*j)); r=t;
+  } return r[0]||[];
 }
 const rep= (f,y)=> {                                                                // #
   let x=f(y), s=x.length===y.length? x: bv1(f, y);                                  
@@ -97,7 +97,13 @@ const cst= (x,y)=>                                                              
   x==="c"? String.fromCharCode(y): x==="i"? sv(parseInt, y): x==="f"? sv(parseFloat, y):
     x==="`"? y.join(""): x==="s"? y.split(""): 
     (()=> {throw new Error("invalid type")})();
-
+const unq= x=> [...new Set(vv(x))];                                                 // ?
+const rnd= (x,y)=> {                                                                // ?
+  let r=[]; while(r.length<Math.abs(x)){
+    let n=Math.floor(Math.random()*y); if(x>0||!r.includes(n))r.push(n);
+  } return r;
+}
+const fnd= (x,y)=> bv1(x=>y.indexOf(x), x);                                         // ?
 
 const assert = require("assert");
 assert.deepStrictEqual(s([1, 2, 3]), [1, 2, 3]);
