@@ -1,4 +1,8 @@
 v: adverbs & verbs
 p: parser
-r: repl
+e: eval
+r: exe (repl, run)
 a: alts
+
+t.js: validations
+t.k: test file
