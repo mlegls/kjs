@@ -21,10 +21,15 @@ const str = x=> {                                                         // con
   let res=[], buf=[], pb= ()=>buf.length&&res.push(buf.join("")),
     pe= e=>{pb(); buf=[]; res.push(e);}
   x.forEach(e=> !e.length || typeof e=="string"&&e.length>1? pe(e): 
-    e.length==1? buf.push(e): pe(str(e))); pb(); return res;
-}
-const eq= (x,y)=> x===y || !a(x) && x.length==y.length                   // deep equality
+    e.length==1? buf.push(e): pe(str(e))); pb(); return res;}
+const eq= (x,y)=> x===y || !a(x) && x.length==y.length                    // deep equality
   && vv(x).every((e,i)=> eq(e, y[i]));
+const fl = x=> a(x)? x: [].concat(...x.map(e=> a(e)? e: fl(e)));          // flatten
+
+// operators
+// reduce
+const rd= f=> (x,y=undefined)=> y===undefined? x.reduce(f): x.reduce(f, y)  // /
+const sc= f=> (x,y=undefined)=> x.map(e=>y=y===undefined? e: f(y,e));       // \
 
 // verbs
 const s= x=> x;                                                                     // ::
@@ -57,7 +62,22 @@ const grp= x=> vv(x).reduce((t,e)=>{t[e]? t[e]++: t[e]=1; return t;}, {});      
 const eql= (x,y)=> bv((x,y)=>b(x===y), x, y);                                       // =
 const not= x=> bv1(x=>b(!x), x);                                                    // ~
 const mch= (x,y)=> b(eq(x,y));                                                      // ~
-
+const enl= x=> [x];                                                                 // ,
+const cat= (x,y)=> x.concat(...y);                                                  // ,
+const nul= x=> bv1(x=>b(null==x), x);                                               // ^
+const fll= (x,y)=> bv1(y=> null==y? x: y, y);                                       // ^
+const wo = (x,y)=> x.filter(e=> !vv(y).includes(e))                                 // ^
+const l= x=> x.length;                                                              // #
+const rs= (x,y)=> {                                                                 // #
+  let s=vv(x).slice(), l=rd(mul)(vv(x)), i=vv(x).indexOf(null), 
+    a=fl(vv(y)), ll=a.length, r=Array(l), t;
+  i>=0 && ll%l===0 && (s[i]=ll/l);
+  for (let c=0; c<l; c++) r[c]=a[c%ll];
+  for (let i=s.length-1; i>=0; i--) {
+    const j=s[i]; t=[];
+    for (let k=0; k<r.length/j; k++) t.push(r.slice(k*j,(k+1)*j)); r=t;
+  } return r[0];
+}
 
 const assert = require("assert");
 assert.deepStrictEqual(s([1, 2, 3]), [1, 2, 3]);
@@ -73,5 +93,5 @@ assert.deepStrictEqual(flp([[1, 2], [3, 4]]), [[1, 3], [2, 4]]);
 module.exports = {
   s, r, flp, neg, add, sub, fst, mul, srt, div, 
   od, k, nsk, d, dm, wh, min, rev, max, asc, lt, dsc, gt,
-  grp, umt, eql, not, mch
+  grp, umt, eql, not, mch, enl, cat, nul, fll, wo
 };
