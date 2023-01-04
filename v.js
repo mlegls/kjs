@@ -17,12 +17,14 @@ const bv= (f,x,y)=>                                                      // broa
     y.length==1? x.map(n=>bv(f,n,y[0])): 
     x.length==y.length? x.map((n,i)=>bv(f,n,y[i])):
     (()=> {throw new Error("length")})()
-const sv= (f,x)=> typeof (x=f(x.join("")))=="string"? x.split(""): x;     // js string op
-const c2s = x=> {                                                         // consecutive chars to strings
+const sv= (f,x)=>                                                        // js string op
+  bv1(x=>typeof x=="string"? x.split(""): x, f(x.join("")));                               
+const c2s = x=> {                                                        // consecutive chars to strings
   let res=[], buf=[], pb= ()=>buf.length&&res.push(buf.join("")),
     pe= e=>{pb(); buf=[]; res.push(e);}
-  x.forEach(e=> !e.length || typeof e=="string"&&e.length>1? pe(e): 
-    e.length==1? buf.push(e): pe(str(e))); pb(); return res;
+  x.forEach(e=> !e.length || typeof e=="string"&&e.length>1? 
+    pe(e): e.length==1? buf.push(e): pe(c2s(e))); pb(); 
+  return res.map(e=> e.length==1&&typeof e[0]=="string"? e[0]: e);
 }
 const eq= (x,y)=> x===y || !a(x) && x.length==y.length                    // deep equality
   && vv(x).every((e,i)=> eq(e, y[i]));
@@ -30,7 +32,15 @@ const fl= x=> a(x)? x: [].concat(...x.map(e=> a(e)? e: fl(e)));           // fla
 
 // operators
 const rd= f=> (x,y=undefined)=> y===undefined? x.reduce(f): x.reduce(f, y)  // /
+const jn= (x,y)=> sv(y=>y.join(x), y);                                      // /
+const dec= (x,y) => {                                                       // /
+  let r=0, n=1; 
+  for (let i=x.length-1; i>=0; i--) {r+=y[i]*n; n*=x[i];} return r;
+}
 const sc= f=> (x,y=undefined)=> x.map(e=>y=y===undefined? e: f(y,e));       // \
+const sp= (x,y)=> sv(y=>y.split(x), y);                                     // \
+const enc= (x,y)=> x.reverse()                                              // \
+  .reduce((a,b)=>{a.unshift(y%b);y=Math.floor(y/b);return a},[]);
 
 // verbs
 const s= x=> x;                                                                     // ::
@@ -54,9 +64,9 @@ const rev= x=> vv(x).reverse();                                                 
 const max= (x,y)=> bv((x,y)=>Math.max(x,y), x, y);                                  // |
 const asc= x=> [...vv(x).keys()].sort((a,b)=> cmp(x[a],x[b]));                      // <
 const lt= (x,y)=> bv((x,y)=>b(x<y), x, y);                                          // <
+const fet = x=> fetch(x).then(r=>r);                                                // <, replaces file open
 const dsc= x=> [...vv(x).keys()].sort((a,b)=> -cmp(x[a],x[b]));                     // >
 const gt= (x,y)=> bv((x,y)=>b(x>y), x, y);                                          // >
-// nyi < and > as open & close http handles
 const umt= x=> [...Array(x).keys()]                                                 // =i, unit matrix
   .map(i=> [].concat(Array(i).fill(0), 1, Array(x-i-1).fill(0)));
 const grp= x=> vv(x).reduce((t,e)=>{t[e]? t[e]++: t[e]=1; return t;}, {});          // =
@@ -122,5 +132,5 @@ module.exports = {
   s, r, flp, neg, add, sub, fst, mul, srt, div, 
   od, k, nsk, d, dm, wh, min, rev, max, asc, lt, dsc, gt,
   grp, umt, eql, not, mch, enl, cat, nul, fll, wo, l, tk, dtk, rs, rep,
-  flr, lcs, drp, del, cut, flt
+  flr, lcs, drp, del, cut, flt, str, pad, cst, unq, rnd, fnd, cal, apl
 };
