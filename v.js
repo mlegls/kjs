@@ -104,6 +104,8 @@ const rnd= (x,y)=> {                                                            
   } return r;
 }
 const fnd= (x,y)=> bv1(x=>y.indexOf(x), x);                                         // ?
+const cal= (x,y)=> typeof x==="function"?x(y): x[y];                                // @
+const apl= (x,y)=> typeof x==="function"?x(...y): x(...y);                          // .
 
 const assert = require("assert");
 assert.deepStrictEqual(s([1, 2, 3]), [1, 2, 3]);
