@@ -47,12 +47,12 @@ const ep= f=> x=> z(x, [null,...x]).map(e=>f(e[0],e[1]));                   // '
 const er= f=> (x,y)=> y.map(e=>f(e,x));                                     // /:
 const el= f=> (x,y)=> x.map(e=>f(e,y));                                     // \:       
 const f= (f, n)=> x=> {for(let i=0; i<n; i++)x=f(x); return x};             // i f/
-const fsc= (f, n)=> x=> {                                                   // i f\
-  let a=[x]; for(let i=0; i<n; i++){x=f(x);a.push(x)}; return a
+const fsc= (f, n)=> x=> {
+  let a=[x]; for(let i=0; i<n; i++){x=f(x);a.push(x)}; return a;
 }            
 const w= (f, g)=> x=> {while(g(x))x=f(x); return x};                        // f f/   
 const wsc= (f, g)=> x=> {                                                   // f f\
-  let a=[x]; while(g(x)){x=f(x);a.push(x)}; return a
+  let a=[x]; while(g(x)){x=f(x);a.push(x)}; return a;
 }
 const cvg= f=> x=> {                                                        // f/
   let a=f(x), b; while (!eq(a,b)&&!eq(a,x)) {b=a; a=f(a);} return a;
@@ -174,8 +174,8 @@ assert.deepStrictEqual(flp([[1, 2], [3, 4]]), [[1, 3], [2, 4]]);
 // export adverbs & verbs
 module.exports = {
   e, rd, jn, dec, sc, sp, enc, ep, er, el, f, fsc, w, wsc, cvg, csc, wd, st, bin,
-  s, r, flp, neg, add, sub, fst, mul, srt, div, od, k, nsk, d, dm, wh, 
-  min, rev, max, asc, lt, dsc, gt, grp, umt, eql, not, mch, enl, cat, 
+  s, r, flp, neg, add, sub, fst, mul, srt, div, od, k, nsk, d, dm, 
+  wh, min, rev, max, asc, lt, dsc, gt, grp, umt, eql, not, mch, enl, cat, 
   nul, fll, wo, l, tk, dtk, rs, rep, flr, lcs, drp, del, cut, flt, 
   str, pad, cst, unq, rnd, fnd, cal, apl, amd, am2, drl, dr2, tr, spl
 };
