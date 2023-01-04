@@ -61,6 +61,13 @@ const csc= f=> x=> {                                                        // f
   let a=f(x), r=[x,a], b; while(!eq(a,b)&&!eq(a,x)){b=a; a=f(a); r.push(a);}
   return r;
 }
+const wd= (x,y)=> y.reduce((a,_,i,r)=> i+x>r.length? a:                     // i':x 
+  a.concat([r.slice(i,i+x)]),[]);
+const st= (f,n)=> x=> x.reduce((a,_,i,r)=> i+n>r.length? a:                 // i f':
+  a.concat([f(r.slice(i,i+n))]),[]);
+const bin= x=> y=> bv1(e=>{                                                 // X'
+  for(let i=0; i<x.length; i++){if(e<x[i])return i-1}; return x.length-1
+},y);
 
 // verbs
 const s= x=> x;                                                                     // ::
@@ -137,6 +144,7 @@ const fnd= (x,y)=> bv1(x=>y.indexOf(x), x);                                     
 const cal= (x,y)=> typeof x==="function"?x(y): x[y];                                // @
 const apl= (x,y)=> typeof x==="function"?x(...y): x(...y);                          // .
 
+// tests
 const assert = require("assert");
 assert.deepStrictEqual(s([1, 2, 3]), [1, 2, 3]);
 assert.deepStrictEqual(r([1, 2, 3], [4, 5, 6]), [4, 5, 6]);
@@ -150,9 +158,9 @@ assert.deepStrictEqual(flp([[1, 2], [3, 4]]), [[1, 3], [2, 4]]);
 
 // export adverbs & verbs
 module.exports = {
-  e, rd, jn, dec, sc, sp, enc, ep, er, el, f, fsc, w, wsc,
-  s, r, flp, neg, add, sub, fst, mul, srt, div, 
-  od, k, nsk, d, dm, wh, min, rev, max, asc, lt, dsc, gt,
-  grp, umt, eql, not, mch, enl, cat, nul, fll, wo, l, tk, dtk, rs, rep,
-  flr, lcs, drp, del, cut, flt, str, pad, cst, unq, rnd, fnd, cal, apl,
+  e, rd, jn, dec, sc, sp, enc, ep, er, el, f, fsc, w, wsc, cvg, csc, wd, st, bin
+  s, r, flp, neg, add, sub, fst, mul, srt, div, od, k, nsk, d, dm, wh, 
+  min, rev, max, asc, lt, dsc, gt, grp, umt, eql, not, mch, enl, cat, 
+  nul, fll, wo, l, tk, dtk, rs, rep, flr, lcs, drp, del, cut, flt, 
+  str, pad, cst, unq, rnd, fnd, cal, apl
 };
