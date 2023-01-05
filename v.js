@@ -145,6 +145,9 @@ const rnd= (x,y)=> {                                                            
 const fnd= (x,y)=> bv1(x=>y.indexOf(x), x);                                         // ?
 const cal= (x,y)=> typeof x==="function"?x(y): x[y];                                // @
 const apl= (x,y)=> typeof x==="function"?x(...y): x(...y);                          // .
+const vls= x=> Object.values(x);                                                    // .
+const get= (x,y)=> x[y];                                                            // .
+const typ= x=> typeof x;                                                            // .
 
 // multi-adic
 const amd= (x,y,f)=> {let r=x.slice();r[y]=f(r[y]);return r}                        // @
