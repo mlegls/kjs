@@ -33,41 +33,42 @@ const z= (x,y)=> x.map((e,i)=> [e,y[i]]);                                       
 
 // adverbs
 const ec= f=> x=> x.map(f);                                                         // '
-const rd= f=> (x,y=undefined)=> y===undefined? x.reduce(f): x.reduce(f, y)          // /
+const ec2= f=> y=> x=> x.map(e=>f(e,y));                                            // '
+const bin= x=> y=> bv1(e=>{                                                         // X'
+  for(let i=0; i<x.length; i++){if(e<x[i])return i-1;} return x.length-1;           //
+},y);                                                                               //
+const rd= f=> y=> x=> y===undefined? x.reduce(f): x.reduce(f, y)                    // /
 const jn= (x,y)=> sv(y=>y.join(x), y);                                              // /
 const dec= (x,y) => {                                                               // /
   let r=0, n=1;                                                                     //
   for (let i=x.length-1; i>=0; i--) {r+=y[i]*n; n*=x[i];} return r;                 //
 }
-const sc= f=> (x,y=undefined)=> x.map(e=>y=y===undefined? e: f(y,e));               // \
+const fr= f=> n=> x=> {for(let i=0; i<n; i++)x=f(x); return x;}                     // i f/
+const wl= f=> g=> x=> {while(g(x))x=f(x); return x;}                                // f f/
+const cvg= f=> x=> {                                                                // f/
+  let a=f(x), b; while (!eq(a,b)&&!eq(a,x)) {b=a; a=f(a);} return a;                //
+}                                                                                   //
+const sc= f=> y=> x=> x.map(e=>y=y===undefined? e: f(y,e));                         // \
 const sp= (x,y)=> sv(y=>y.split(x), y);                                             // \
 const enc= (x,y)=> x.reverse()                                                      // \
   .reduce((a,b)=>{a.unshift(y%b);y=Math.floor(y/b);return a;},[]);                  //
-const ecp= f=> x=> z(x, [null,...x]).map(e=>f(e[0],e[1]));                          // ':
-const ecr= f=> (x,y)=> y.map(e=>f(e,x));                                            // /:
-const ecl= f=> (x,y)=> x.map(e=>f(e,y));                                            // \:
-const f= (f, n)=> x=> {for(let i=0; i<n; i++)x=f(x); return x;}                     // i f/
-const fsc= (f, n)=> x=> {                                                           //
+const fsc= f=> n=> x=> {                                                            // i f\
   let a=[x]; for(let i=0; i<n; i++){x=f(x);a.push(x)}; return a;                    //
 }                                                                                   //
-const w= (f, g)=> x=> {while(g(x))x=f(x); return x;}                                // f f/
-const wsc= (f, g)=> x=> {                                                           // f f\
+const wsc= f=> g=> x=> {                                                            // f f\
   let a=[x]; while(g(x)){x=f(x);a.push(x);} return a;                               //
-}                                                                                   //
-const cvg= f=> x=> {                                                                // f/
-  let a=f(x), b; while (!eq(a,b)&&!eq(a,x)) {b=a; a=f(a);} return a;                //
 }                                                                                   //
 const csc= f=> x=> {                                                                // f\
   let a=f(x), r=[x,a], b; while(!eq(a,b)&&!eq(a,x)){b=a; a=f(a); r.push(a);}        //
   return r;                                                                         //
 }                                                                                   //
-const wd= (x,y)=> y.reduce((a,_,i,r)=> i+x>r.length? a:                             // i':x
-  a.concat([r.slice(i,i+x)]),[]);                                                   //
-const st= (f,n)=> x=> x.reduce((a,_,i,r)=> i+n>r.length? a:                         // i f':
+const ecr= f=> (x,y)=> y.map(e=>f(e,x));                                            // /:
+const ecl= f=> (x,y)=> x.map(e=>f(e,y));                                            // \:
+const st= f=> n=> x=> x.reduce((a,_,i,r)=> i+n>r.length? a:                         // i f':
   a.concat([f(r.slice(i,i+n))]),[]);                                                //
-const bin= x=> y=> bv1(e=>{                                                         // X'
-  for(let i=0; i<x.length; i++){if(e<x[i])return i-1;} return x.length-1;           //
-},y);                                                                               //
+const wd= n=> x=> st(x=>x)(n)(x);                                                   // i':
+const ecp= f=> y=> x=>                                                              // ':
+  z(x, [y===undefined? null: y,...x]).map(e=>f(e[0],e[1]));
 
 // verbs
 const s= x=> x;                                                                     // ::
@@ -162,7 +163,7 @@ const spl= (x,y,z)=> x.slice(0,y[0]).concat(z).concat(x.slice(y[1]))            
 
 module.exports = {
   ec, rd, jn, dec, sc, sp, enc, ecp, ecr, ecl, 
-  f, fsc, w, wsc, cvg, csc, wd, st, bin,
+  fr, fsc, wl, wsc, cvg, csc, wd, st, bin,
   s, r, flp, neg, add, sub, fst, mul, srt, div, od, k, nsk, d, dm, 
   wh, min, rev, max, asc, lt, dsc, gt, grp, umt, eql, not, mch, enl, cat, 
   nul, fll, wo, l, tk, dtk, rs, rep, flr, lcs, drp, del, cut, flt, 

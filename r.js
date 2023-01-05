@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-const ev= require("./e.js");
+const {gk} = require("./e.js");
 const f = require("fs");
 const rl= require("readline").createInterface({
   input: process.stdin, output: process.stdout,
 });
-const r= i=> f.readFile(i,"utf8",(e,d)=> console.log(e ?? ev(d)), repl());
+const r= i=> f.readFile(i,"utf8",(e,d)=> console.log(e ?? gk(d)), repl());
 const repl= ()=> rl.question("> ", i=>i==="\\\\"? 
-  rl.close(): (console.log(ev(i)),repl()));
+  rl.close(): (console.log(gk(i)),repl()));
 
 switch(process.argv.length){
   case 2: repl(); break;
