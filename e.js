@@ -12,16 +12,14 @@ const l= x=> x.split(/([~`!@#$%^&*()_\-+={}[\]|\\:;"'<,>.?/\s])/g)  // lex
   .filter(e=>e!=="");
 // group brackets, quotes
 const g= (t,c=0,b="")=> {
-  const m = {"[": "]", "(": ")", "{": "}", '"': '"'}
-  let r=[]
+  const m = {"[": "]", "(": ")", "{": "}", '"': '"'}; let r=[]
   while(c<t.length){
-    if (t[c] in m && b!=='"') {
-      let [s,n] = g(t,c+1,m[t[c]]);
-      r.push([t[c],...s]); c=n;
-    } else if (t[c]===b) {
+    if (t[c] in m && b!=='"'){
+      let [s,n] = g(t,c+1,m[t[c]]); r.push([t[c],...s]); c=n;
+    }else if(t[c]===b){
+      if(b==='"'&&t[c+1]==='"'){r.push('"');c+=2;continue;}
       return [r,c+1];
-    } else {r.push(t[c]); c++};
-  } return r;
+    } else {r.push(t[c]); c++}; } return r;
 }
 const sbd = x=> x.slice(1).join("");                                // string body
 
