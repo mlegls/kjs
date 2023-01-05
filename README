@@ -1,5 +1,4 @@
 v: adverbs & verbs
-p: parser
 e: eval
 r: exe (repl, run)
 a: alts
