@@ -1,5 +1,6 @@
 {
   "name": "@mlegls/kjs",
+  "type": "module",
   "version": "0.0.1",
   "description": "k interpreter in pure js",
   "main": "p.js",

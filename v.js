@@ -161,7 +161,7 @@ const tr= (f,y,g)=> {try {return f(y)} catch(e) {return g(e)}}                  
 const spl= (x,y,z)=> x.slice(0,y[0]).concat(z).concat(x.slice(y[1]))                // ?
 
 
-module.exports = {
+export {
   ec, rd, jn, dec, sc, sp, enc, ecp, ecr, ecl, 
   fr, fsc, wl, wsc, cvg, csc, wd, st, bin,
   s, r, flp, neg, add, sub, fst, mul, srt, div, od, k, nsk, d, dm, 
