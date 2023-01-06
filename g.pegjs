@@ -178,6 +178,9 @@ const vbs= {
   "#": [l,(x,y)=>funp(x)? rep(x,y): arrp(x)||x>=0? rs(x,y): x<=0? tk(x,y): dtk(x,y)],
   "_": [x=>nump(x)? flr(x): lcs(x), (x,y)=> nump(x)&&arrp(y)? drp(x,y): 
     nump(y)&&arrp(x)? del(y,x): arrp(x)? cut(x,y): flt(x,y)],
+  "$": [str,(x,y)=>nump(x)&&strp(y)?pad(x,y):cst(x,y)], 
+  "?": [x=>nump(x)?uni(x):unq(x),(x,y)=>nump(x)? rnd(x,y): fnd(x,y)],
+  "@":[typ,cal], ".": [vls,(x,y)=>funp(x)?apl(x,y):get(x,y)],
 }
 const advs = {
   "'": ec, "/": rd, "\\": sc, "/:": ecr, "\\:": ecl, "':": ecp
@@ -187,8 +190,9 @@ let sctx={}
 const name= Symbol("name")
 
 const tre= f=> {try {return f()} catch(e) {return f}}                         // try eval
-const nap= (f,x,y)=> y===undefined? ()=>f(ctx[x.v]): 						              // name apply
-  ()=>f(ctx[x.v],ctx[y.v])
+const nap= (f,x,y)=> y===undefined? x.t===name? ()=>f(sctx[x.v]): 						// name apply
+	f(x): x.t===name&&y.t===name? ()=>f(sctx[x.v],sctx[y.v]):
+  x.t===name? ()=>f(sctx[x.v],y): y.t===name? ()=>f(x,sctx[y.v]): f(x,y);
 }
 
 Expr = Term / Proj / Dvb / e:Argl {return e[e.length-1]} / _
@@ -196,12 +200,12 @@ Term = v:Mvb _? x:Term {return nap(v,x)}
 	/ x:Factor _? v:Dvb _? y:Term {return nap(v[1],x,y)}
     / v:Dvb _? x:Term {return nap(v[0],x)}
     / Factor
-Factor= List / "(" _? expr:Expr _? ")" {return expr;}
+Factor= List / "(" _? expr:Expr _? ")" {return expr;} / Proj
 Proj= l:Lamd a:Argl {return l(...a.filter(e=>e!==";"))}
 	/ Lamd
 Lamd= "{"a:Argl?b:Expr?"}" {a=a??["x","y","z"]; return (...args)=>
   {
-    a.filter(e=>e!=";").forEach((e,i)=>sctx[e.v]=args[i]);
+    a.forEach((e,i)=>sctx[e]=args[i]);
     let r=typeof b==="function"? b(): b;
     sctx={}; return r;
   }}
@@ -218,12 +222,9 @@ Null= "0n" / "0N" {return null}
 Num= _? [0-9]+"."?[0-9]* {return +text();}
 Char= '"'v:.'"' {return v;}
 Sym= "`"v:([a-zA-Z]+/Str) {return v.join("");}
-Name= [a-zA-Z]+ {return {t:name, v:text()}}
+Name= [a-zA-Z]+ {return ctx[text()]??{t:name, v:text()}}
 Mvb= v:Vb":" {return v[0];}
 Vb= [~!@#$%^&*_\-+=||<,>.?] {return vbs[text()];}
 Adv= [\\/']":"? {return advs[text()]}
-Comment= "/".* {return}
+Comment= "/"[^\n]* {return}
 _ "whitespace" = [ \t\n\r]+ {return}
-
-
-
