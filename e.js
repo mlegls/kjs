@@ -67,6 +67,23 @@ const op= {
   "-": (x,y)=> md(v.neg,v.sub,x,y),
   "*": (x,y)=> md(v.fst,v.mul,x,y),
   "%": (x,y)=> md(v.srt,v.div,x,y),
+  "!": (x,y)=> md(x=>(typeof x==="number"||Array.isArray(x))? v.od(x): v.k(x),
+    (x,y)=>(typeof x==="number"&&typeof y==number)? v.dm(x,y): v.d(x,y),x,y),
+  "&": (x,y)=> md(v.wh,v.min,x,y),
+  "|": (x,y)=> md(v.rev,v.max,x,y),
+  "<": (x,y)=> md(v.asc,v.lt,x,y),
+  ">": (x,y)=> md(v.dsc,v.gt,x,y),
+  "=": (x,y)=> md(x=>(typeof x==="number")? v.umt(x): v.grp(x),v.eql,x,y),
+  "~": (x,y)=> md(v.not,v.mch,x,y),
+  ",": (x,y)=> md(v.enl,v.cat,x,y),
+  "^": (x,y)=> md(v.nul,(x,y)=>(Array.isArray(x)&&Array.isArray(y))?
+    v.wo(x,y): v.fll(x,y),x,y),
+  "#": (x,y)=> md(v.l,(x,y)=>(typeof x==="function")? v.rep(x,y): 
+    (Array.isArray(x)||x>=0)? v.rs(x,y): (x<=0)? v.tk(x,y): v.dtk(x,y),x,y),
+  "_": (x,y)=> md(x=>(typeof x==="number")? v.flr(x): v.lcs(x),
+    (x,y)=>(typeof x==="number"&&Array.isArray(y))? v.drp(x,y):
+    (typeof y==="number"&&Array.isArray(x))? v.del(x,y):
+    Array.isArray(x)? v.cut(x,y): v.flt(x,y),x,y),
 }
 const e= async (x,cx,gcx=undefined,c=0)=> {                 // eval in context
   let st=[],ls=false,lst=()=>st[st.length-1], 

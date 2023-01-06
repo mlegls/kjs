@@ -75,7 +75,7 @@ const s= x=> x;                                                                 
 const r= (x,y)=> y;                                                                 // :
 const flp= x=> t(vv2(x))                                                            // +
 const add= (x,y)=> bv((x,y)=>c(x)+c(y), x, y);                                      // +
-const neg= x=> bv1(x=>-x, x);                                                      // -
+const neg= x=> bv1(x=>-x, x);                                                       // -
 const sub= (y,x)=> bv((x,y)=>c(x)-c(y), x, y);                                      // -
 const fst= x=> x[0];                                                                // *
 const mul= (x,y)=> bv((x,y)=>x*y, x, y);                                            // iI*iI, not defined for chars
@@ -83,7 +83,6 @@ const srt= x=> bv1(x=>Math.sqrt(x), x)                                          
 const div= (x,y)=> bv((x,y)=>x/y, x, y);                                            // iI%iI, not defined for chars
 const od= v=> cp(...vv(v).map(n => [...Array(n).keys()]));                          // !iI, would be +! in ngn/k
 const k= Object.keys;                                                               // !
-const nsk= x=> x.map(e=> Object.keys(e));                                           // !, ns
 const d= (x,y)=> Object.fromEntries(x.map((k,i)=> [k,y[i]]));                       // !
 const dm= (x,y)=> x>0? y%x: Math.floor(y/x);                                        // i!I, div or mod
 const wh= x=> [].concat(...vv(x).map((e,i)=> e.length? [wh(e)]: Array(e).fill(i))); // &
@@ -106,11 +105,11 @@ const cat= (x,y)=> x.concat(...y);                                              
 const nul= x=> bv1(x=>b(null==x), x);                                               // ^
 const fll= (x,y)=> bv1(y=> null==y? x: y, y);                                       // ^
 const wo = (x,y)=> x.filter(e=> !vv(y).includes(e))                                 // ^
-const l= x=> x.length;                                                              // #
+const l= x=> a(x)? 1: x.length;                                                     // #
 const tk= (x,y)=> x>0? y.slice(0,x): y.slice(x);                                    // #
 const dtk= (x,y)=> bv1(x=> y[x], x);                                                // #
 const rs= (x,y)=> {                                                                 // #
-  let s=vv(x).slice(), l=rd((x,y)=>!y? x: x*y)(vv(s)),                              //
+  let s=vv(x).slice(), l=rd((x,y)=>!y? x: x*y)()(vv(s)),                            //
     a=fl(vv(y)), ll=a.length, r=Array(l), t, i=s.indexOf(null);                     //
   if(i>=0){s[i]=Math.ceil(ll/(l=l||1)); l*=s[i];}                                   //
   for(let c=0; c<l; c++)r[c]=a[c%ll];                                               //
@@ -168,7 +167,7 @@ const spl= (x,y,z)=> x.slice(0,y[0]).concat(z).concat(x.slice(y[1]))            
 export {
   ec, rd, jn, dec, sc, sp, enc, ecp, ecr, ecl, 
   fr, fsc, wl, wsc, cvg, csc, wd, st, bin,
-  s, r, flp, neg, add, sub, fst, mul, srt, div, od, k, nsk, d, dm, 
+  s, r, flp, neg, add, sub, fst, mul, srt, div, od, k, d, dm, 
   wh, min, rev, max, asc, lt, dsc, gt, grp, umt, eql, not, mch, enl, cat, 
   nul, fll, wo, l, tk, dtk, rs, rep, flr, lcs, drp, del, cut, flt, 
   str, pad, cst, unq, rnd, fnd, cal, apl, amd, am2, drl, dr2, tr, spl
