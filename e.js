@@ -8,12 +8,12 @@ const ft= async p=> await                                           // fetch tex
     fs.readFileSync(p, "utf8");
 const sft= (p,f)=> fs.readFileSync(p, "utf8");                      // sync fetch text
 
-const sym= /([~`!@#$%^&*()_\-+={}[\]|\\:;"'<,>?/\s])/g;            // symbols
+const sym= /([~`!@#$%^&*()_\-+={}[\]|\\:;"'<,>?/\s])/g;             // symbols
 const adv= /^[\\/']$/;
 const vb= /^[~!@#$%^&*_+\-=|<,>.?]$/;
 const nl= /^\r?\n$/;                                                // new line
 const num= /^\d+.?\d*$/;
-const lx= x=> x.split(sym).filter(e=>e!=="");                        // lex
+const lx= x=> x.split(sym).filter(e=>e!=="");                       // lex
 const g= (t,c=0,b="")=> {                                           // group
   const m={"[":"]","(":")","{": "}",'"':'"'}, q=b==='"'; let r=[]
   while(c<t.length){
@@ -106,7 +106,7 @@ const e= async (x,cx,gcx=undefined,c=0)=> {                 // eval in context
   }
 */
   for(const e of t){
-    // console.log(st); // debug
+    console.log(st); // debug
     typeof e==="number"? st.push(e):
       e===sep? ar()||st.push(e):
       typeof e==="symbol"? st.push(e):
@@ -114,7 +114,7 @@ const e= async (x,cx,gcx=undefined,c=0)=> {                 // eval in context
       vb.test(e)? st.push(op[e](p(),p())):
       st.push(e);
   }
-  // console.log(t); 
+  console.log(t); 
   return p();
 }
 
