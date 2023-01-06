@@ -28,15 +28,27 @@ const g= (t,c=0,b="")=> {                                           // group
 // 5: `p   6:  `q   7:  `r   8: `u 
 // 9: `v   10: `w   11: `x   12: .
 const tl= x=> x.slice(1);                                // tail
-const sep= Symbol("sep");
-const stk= t=>{
+const tca= x=> [].concat(...tl(x).map(x=>x.split(""))); // to char array
+const sep= Symbol("sep"); // generic seperator
+const mm= Symbol("mm"); // make matrix
+const ms= Symbol("ms"); // matrix seperator
+const mtx= x=> {
+  let b=[], o=[]
+  for (let e of x){
+    Array.isArray(e)? b.push(e[0]==='"'? tca(e): stk(tl(e))):
+      num.test(e)? b.push(+e):
+      e===";"? o.push(b.length>1? b: b[0])&&(b=[]):
+      e!==" "&&o.push(e);
+  } return o.push(b.length>1? b: b[0])&&o;
+}
+const stk= (t)=>{
   let o=[], s=[], pa=()=>{while(s.length)o.push(s.pop())},
     pa2=()=>{while(s.length&&s[s.length-1]!==":")o.push(s.pop())};
   for (let e of t){
     if (Array.isArray(e)){
       switch (e[0]){
-        case '"': o.push([].concat(...tl(e).map(x=>x.split("")))); break;
-        case "(": o=o.concat(...stk(tl(e))); break;
+        case '"': o.push(tca(e)); break;
+        case "(": e.includes(";")? o.push(mtx(tl(e))): o=o.concat(...stk(tl(e))); break;
       }
     } else {
       num.test(e)? o.push(+e):
@@ -77,14 +89,16 @@ const e= async (x,cx,gcx=undefined,c=0)=> {                 // eval in context
   }
 */
   for(const e of t){
-    console.log(st); // debug
+    // console.log(st); // debug
     typeof e==="number"? st.push(e):
       e===sep? ar()||st.push(e):
+      typeof e==="symbol"? st.push(e):
       e===" "? ls=true:
       vb.test(e)? st.push(op[e](p(),p())):
       st.push(e);
   }
-  console.log(t); return st[st.length-1];
+  // console.log(t); 
+  return p();
 }
 
 export const gk= async x=> await e(x,globalThis);                                      // global
