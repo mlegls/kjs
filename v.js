@@ -137,12 +137,13 @@ const cst= (x,y)=>                                                              
     x==="`"? y.join(""): x==="s"? y.split(""):                                      //
     (()=> {throw new Error("invalid type")})();                                     //
 const unq= x=> [...new Set(vv(x))];                                                 // ?
+const fnd= (x,y)=> bv1(x=>y.indexOf(x), x);                                         // ?
+const uni= x=> {let r=[]; while(r.length<x)r.push(Math.random()); return r;}        // ?
 const rnd= (x,y)=> {                                                                // ?
   let r=[]; while(r.length<Math.abs(x)){                                            //
     let n=Math.floor(Math.random()*y); if(x>0||!r.includes(n))r.push(n);            //
   } return r;                                                                       //
 }                                                                                   //
-const fnd= (x,y)=> bv1(x=>y.indexOf(x), x);                                         // ?
 const cal= (x,y)=> typeof x==="function"?x(y): x[y];                                // @
 const apl= (x,y)=> typeof x==="function"?x(...y): x(...y);                          // .
 const vls= x=> Object.values(x);                                                    // .
