@@ -63,8 +63,8 @@ const csc= f=> x=> {                                                            
   let a=f(x), r=[x,a], b; while(!eq(a,b)&&!eq(a,x)){b=a; a=f(a); r.push(a);}        //
   return r;                                                                         //
 }                                                                                   //
-const ecr= f=> (x,y)=> y.map(e=>f(e,x));                                            // /:
-const ecl= f=> (x,y)=> x.map(e=>f(e,y));                                            // \:
+const ecr= f=> y=> x=> y.map(e=>f(e,x));                                            // /:
+const ecl= f=> y => x=> x.map(e=>f(e,y));                                            // \:
 const st= f=> n=> x=> x.reduce((a,_,i,r)=> i+n>r.length? a:                         // i f':
   a.concat([f(r.slice(i,i+n))]),[]);                                                //
 const wd= n=> x=> st(x=>x)(n)(x);                                                   // i':
@@ -77,7 +77,7 @@ const r= (x,y)=> y;                                                             
 const flp= x=> t(vv2(x))                                                            // +
 const add= (x,y)=> bv((x,y)=>c(x)+c(y), x, y);                                      // +
 const neg= x=> bv1(x=>-x, x);                                                       // -
-const sub= (y,x)=> bv((x,y)=>c(x)-c(y), x, y);                                      // -
+const sub= (x,y)=> bv((x,y)=>c(x)-c(y), x, y);                                      // -
 const fst= x=> x[0];                                                                // *
 const mul= (x,y)=> bv((x,y)=>x*y, x, y);                                            // iI*iI, not defined for chars
 const srt= x=> bv1(x=>Math.sqrt(x), x)                                              // %
@@ -108,7 +108,7 @@ const fll= (x,y)=> bv1(y=> null==y? x: y, y);                                   
 const wo = (x,y)=> x.filter(e=> !vv(y).includes(e))                                 // ^
 const l= x=> a(x)? 1: x.length;                                                     // #
 const tk= (x,y)=> x>0? y.slice(0,x): y.slice(x);                                    // #
-const dtk= (x,y)=> bv1(x=> y[x], x);                                                // #
+const dtk= (x,y)=> bv1(x=>y[x], x);                                                 // #
 const rs= (x,y)=> {                                                                 // #
   let s=vv(x).slice(), l=rd((x,y)=>!y? x: x*y)()(vv(s)),                            //
     a=fl(vv(y)), ll=a.length, r=Array(l), t, i=s.indexOf(null);                     //
