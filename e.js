@@ -29,31 +29,30 @@ const g= (t,c=0,b="")=> {                                           // group
 // 9: `v   10: `w   11: `x   12: .
 const tl= x=> x.slice(1);                                // tail
 const stk= t=>{
-  let o=[], s=[], ts=[]
+  let o=[], s=[], pa=()=>{while(s.length)o.push(s.pop())},
+    pa2=()=>{while(s.length&&s[s.length-1]!==":")o.push(s.pop())};
   for (let e of t){
     if (Array.isArray(e)){
       switch (e[0]){
-        case '"': o.push(tl(e).join("")); break;
+        case '"': o.push([].concat(...tl(e).map(x=>x.split("")))); break;
         case "(": o=o.concat(...stk(tl(e))); break;
       }
     } else {
       num.test(e)? o.push(+e):
-        vb.test(e)? s.push(e) && o.push("[SEP]"):
-        adv.test(e)? s.push(e):
+        vb.test(e)? o.push("[SEP]")&&pa2()||s.push(e):
+        adv.test(e)? pa2()||s.push(e):
+        e===":"? s.push(":"):
         o.push(e);
-    } 
-  } 
-  while(s.length){o.push(s.pop());} return o;
+    } } pa(); return o;
 }
 
-
 const e= async (x,cx,gcx=undefined,c=0)=> {                 // eval in context
-  let l,o; gcx=gcx??cx;
+  let a,o; gcx=gcx??cx;
   if(x[0]==="\\"){switch(x[1]){
     case "\\": return tr(()=>execSync(x.slice(2)                    // \\.. shell
       ,(e,so,se)=>so??se??e).toString());
     default: return tr(()=>console.log(eval(x.slice(1))));              // \.. js eval
-  }} let t=stk(g(x));
+  }} let t=stk(g(l(x)));
 /*
   if(t[1]===":")switch(t[0]){
     case "0": let o=await tr(()=>ft(sbd(t[2])));                       // 0:.. fetch lines
