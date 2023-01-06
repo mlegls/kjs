@@ -106,7 +106,7 @@ const eql= (x,y)=> bv((x,y)=>b(x===y), x, y);                                   
 const not= x=> bv1(x=>b(!x), x);                                                    // ~
 const mch= (x,y)=> b(eq(x,y));                                                      // ~
 const enl= x=> [x];                                                                 // ,
-const cat= (x,y)=> x.concat(...y);                                                  // ,
+const cat= (x,y)=> x.concat(y);                                                  // ,
 const nul= x=> bv1(x=>b(null==x), x);                                               // ^
 const fll= (x,y)=> bv1(y=> null==y? x: y, y);                                       // ^
 const wo = (x,y)=> x.filter(e=> !vv(y).includes(e))                                 // ^
@@ -200,7 +200,7 @@ Term = v:Mvb _? x:Term {return nap(v,x)}
 	/ x:Factor _? v:Dvb _? y:Term {return nap(v[1],x,y)}
     / v:Dvb _? x:Term {return nap(v[0],x)}
     / Factor
-Factor= List / "(" _? expr:Expr _? ")" {return expr;} / Proj
+Factor= List / "(" _? expr:Expr _? ")" {return expr;} / Proj / Dvb
 Proj= l:Lamd a:Argl {return l(...a.filter(e=>e!==";"))}
 	/ Lamd
 Lamd= "{"a:Argl?b:Expr?"}" {a=a??["x","y","z"]; return (...args)=>
@@ -212,7 +212,7 @@ Lamd= "{"a:Argl?b:Expr?"}" {a=a??["x","y","z"]; return (...args)=>
 Argl= "["e:ArglT*"]" {return e}
 ArglT= ";" / Expr
 Dvb= v:(Vb /Mvb) a:Adv {return [a(v[1])(),(x,y)=>a(v[1])(y)(x)]}
-	/ Vb
+	/ Vb / Mvb
 List= e:(Atom)+ {return e.length===1? e[0]: e}
 	/ Str 
     / "("es:(Expr";")+l:Expr")" {return [...es.map(x=>x[0]), l]}

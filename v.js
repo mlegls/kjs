@@ -102,7 +102,7 @@ const eql= (x,y)=> bv((x,y)=>b(x===y), x, y);                                   
 const not= x=> bv1(x=>b(!x), x);                                                    // ~
 const mch= (x,y)=> b(eq(x,y));                                                      // ~
 const enl= x=> [x];                                                                 // ,
-const cat= (x,y)=> x.concat(...y);                                                  // ,
+const cat= (x,y)=> x.concat(y);                                                     // ,
 const nul= x=> bv1(x=>b(null==x), x);                                               // ^
 const fll= (x,y)=> bv1(y=> null==y? x: y, y);                                       // ^
 const wo = (x,y)=> x.filter(e=> !vv(y).includes(e))                                 // ^
@@ -144,11 +144,11 @@ const rnd= (x,y)=> {                                                            
     let n=Math.floor(Math.random()*y); if(x>0||!r.includes(n))r.push(n);            //
   } return r;                                                                       //
 }                                                                                   //
+const typ= x=> typeof x;                                                            // @
 const cal= (x,y)=> typeof x==="function"?x(y): x[y];                                // @
 const apl= (x,y)=> typeof x==="function"?x(...y): x(...y);                          // .
 const vls= x=> Object.values(x);                                                    // .
 const get= (x,y)=> x[y];                                                            // .
-const typ= x=> typeof x;                                                            // .
 
 // multi-adic
 const amd= (x,y,f)=> {let r=x.slice();r[y]=f(r[y]);return r}                        // @
