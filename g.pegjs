@@ -1,5 +1,4 @@
 {
-const ctx={}
 // util
 const nump= x=> typeof x==='number'
 const strp= x=> typeof x==='string'
@@ -36,9 +35,7 @@ const eq= (x,y)=> x===y || !a(x) && x.length==y.length                          
   && vv(x).every((e,i)=> eq(e, y[i]));                                              //
 const fl= x=> a(x)? x: [].concat(...x.map(e=> a(e)? e: fl(e)));                     // flatten
 const z= (x,y)=> x.map((e,i)=> [e,y[i]]);                                           // zip
-const trs= (fs,xs)=> {for(let i=0;i<fs.length-1;i++)
-  {try{return fs[i](...xs)}catch(e){return e}}}
-
+  
 // adverbs
 const ec= f=> x=> x.map(f);                                                         // '
 const ec2= f=> y=> x=> x.map(e=>f(e,y));                                            // '
@@ -185,16 +182,29 @@ const vbs= {
 const advs = {
   "'": ec, "/": rd, "\\": sc, "/:": ecr, "\\:": ecl, "':": ecp
 }
+const ctx={}
+let sctx={}
+const name= Symbol("name")
+
+const tre= f=> {try {return f()} catch(e) {return f}}                         // try eval
+const nap= (f,x,y)=> y===undefined? ()=>f(ctx[x.v]): 						              // name apply
+  ()=>f(ctx[x.v],ctx[y.v])
 }
+
 Expr = Term / Proj / Dvb / e:Argl {return e[e.length-1]} / _
-Term = v:Mvb _? x:Term {return v(x)}
-	/ x:Factor _? v:Dvb _? y:Term {return v[1](x,y)}
-    / v:Dvb _? x:Term {return v[0](x)}
+Term = v:Mvb _? x:Term {return nap(v,x)}
+	/ x:Factor _? v:Dvb _? y:Term {return nap(v[1],x,y)}
+    / v:Dvb _? x:Term {return nap(v[0],x)}
     / Factor
-Factor= List / Atom / "(" _? expr:Expr _? ")" {return expr;}
-Proj= l:Lamd a:Argl {return {t:"p", l,a}}
+Factor= List / "(" _? expr:Expr _? ")" {return expr;}
+Proj= l:Lamd a:Argl {return l(...a.filter(e=>e!==";"))}
 	/ Lamd
-Lamd= "{"a:Argl?b:Expr?"}" {return {t:"o", a: a??["x","y","z"], b}}
+Lamd= "{"a:Argl?b:Expr?"}" {a=a??["x","y","z"]; return (...args)=>
+  {
+    a.filter(e=>e!=";").forEach((e,i)=>sctx[e.v]=args[i]);
+    let r=typeof b==="function"? b(): b;
+    sctx={}; return r;
+  }}
 Argl= "["e:ArglT*"]" {return e}
 ArglT= ";" / Expr
 Dvb= v:(Vb /Mvb) a:Adv {return [a(v[1])(),(x,y)=>a(v[1])(y)(x)]}
@@ -208,10 +218,12 @@ Null= "0n" / "0N" {return null}
 Num= _? [0-9]+"."?[0-9]* {return +text();}
 Char= '"'v:.'"' {return v;}
 Sym= "`"v:([a-zA-Z]+/Str) {return v.join("");}
-Name= [a-zA-Z]+ {return ctx[text()]}
+Name= [a-zA-Z]+ {return {t:name, v:text()}}
 Mvb= v:Vb":" {return v[0];}
 Vb= [~!@#$%^&*_\-+=||<,>.?] {return vbs[text()];}
 Adv= [\\/']":"? {return advs[text()]}
 Comment= "/".* {return}
 _ "whitespace" = [ \t\n\r]+ {return}
+
+
 
