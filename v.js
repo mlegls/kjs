@@ -76,7 +76,7 @@ const r= (x,y)=> y;                                                             
 const flp= x=> t(vv2(x))                                                            // +
 const add= (x,y)=> bv((x,y)=>c(x)+c(y), x, y);                                      // +
 const neg= x=> x.map(n => -n);                                                      // -
-const sub= (x,y)=> bv((x,y)=>c(x)-c(y), x, y);                                      // -
+const sub= (y,x)=> bv((x,y)=>c(x)-c(y), x, y);                                      // -
 const fst= x=> x[0];                                                                // *
 const mul= (x,y)=> bv((x,y)=>x*y, x, y);                                            // iI*iI, not defined for chars
 const srt= x=> bv1(x=>Math.sqrt(x), x)                                              // %
