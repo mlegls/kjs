@@ -186,16 +186,15 @@ const advs = {
   "'": ec, "/": rd, "\\": sc, "/:": ecr, "\\:": ecl, "':": ecp
 }
 const ctx={}
-let sctx={}
 const name= Symbol("name")
 
 const tre= f=> {try {return f()} catch(e) {return f}}                         // try eval
-const nap= (f,x,y)=> y===undefined? x.t===name? ()=>f(sctx[x.v]): 						// name apply
-	f(x): x.t===name&&y.t===name? ()=>f(sctx[x.v],sctx[y.v]):
-  x.t===name? ()=>f(sctx[x.v],y): y.t===name? ()=>f(x,sctx[y.v]): f(x,y);
+const nap= (f,x,y)=> y===undefined? x.t===name? c=>f(x.g(c)): 						// name apply
+	f(x): x.t===name&&y.t===name? c=>f(x.g(c),y.g(c)):
+  x.t===name? c=>f(x.g(c),y): y.t===name? c=>f(x,y.g(c)): f(x,y);
 }
 
-Expr = Term / Proj / Dvb / e:Argl {return e[e.length-1]} / _
+Expr = Term / Proj / Dvb / e:Argl / _
 Term = v:Mvb _? x:Term {return nap(v,x)}
 	/ x:Factor _? v:Dvb _? y:Term {return nap(v[1],x,y)}
     / v:Dvb _? x:Term {return nap(v[0],x)}
@@ -205,8 +204,9 @@ Proj= l:Lamd a:Argl {return l(...a.filter(e=>e!==";"))}
 	/ Lamd
 Lamd= "{"a:Argl?b:Expr?"}" {a=a??["x","y","z"]; return (...args)=>
   {
+  	let sctx={};
     a.forEach((e,i)=>sctx[e]=args[i]);
-    let r=typeof b==="function"? b(): b;
+    let r=typeof b==="function"? b(sctx): b;
     sctx={}; return r;
   }}
 Argl= "["e:ArglT*"]" {return e}
@@ -222,7 +222,7 @@ Null= "0n" / "0N" {return null}
 Num= _? [0-9]+"."?[0-9]* {return +text();}
 Char= '"'v:.'"' {return v;}
 Sym= "`"v:([a-zA-Z]+/Str) {return v.join("");}
-Name= [a-zA-Z]+ {return ctx[text()]??{t:name, v:text()}}
+Name= [a-zA-Z]+ {let n=text(); return ctx[n]??{t:name, v:n, g:c=>c[n]}}
 Mvb= v:Vb":" {return v[0];}
 Vb= [~!@#$%^&*_\-+=||<,>.?] {return vbs[text()];}
 Adv= [\\/']":"? {return advs[text()]}
