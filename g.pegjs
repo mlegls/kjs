@@ -202,12 +202,11 @@ Term = v:Mvb _? x:Term {return nap(v,x)}
 Factor= List / "(" _? expr:Expr _? ")" {return expr;} / Proj / Dvb
 Proj= l:Lamd a:Argl {return l(...a.filter(e=>e!==";"))}
 	/ Lamd
-Lamd= "{"a:Argl?b:Expr?"}" {a=a??["x","y","z"]; return (...args)=>
+Lamd= "{"a:Argl?b:Expr?"}" {a=a??[{v:"x"},{v:"y"},{v:"z"}]; return (...args)=>
   {
-  	let sctx={};
-    a.forEach((e,i)=>sctx[e]=args[i]);
-    let r=typeof b==="function"? b(sctx): b;
-    sctx={}; return r;
+  	let sctx={}; 
+    a.filter(e=>e!==";").forEach((e,i)=>sctx[e.v]=args[i]);
+    let r=typeof b==="function"? b(sctx): b; return r;
   }}
 Argl= "["e:ArglT*"]" {return e}
 ArglT= ";" / Expr
