@@ -187,11 +187,21 @@ const advs = {
 }
 const ctx={}
 const name= Symbol("name")
+const prom= Symbol("promise")
 
 const tre= f=> {try {return f()} catch(e) {return f}}                         // try eval
-const nap= (f,x,y)=> y===undefined? x.t===name? c=>f(x.g(c)): 						// name apply
-	f(x): x.t===name&&y.t===name? c=>f(x.g(c),y.g(c)):
-  x.t===name? c=>f(x.g(c),y): y.t===name? c=>f(x,y.g(c)): f(x,y);
+// const nap= (f,x,y)=> y===undefined? x.t===name? c=>f(x.g(c)): 						// name apply
+//	f(x): x.t===name&&y.t===name? c=>f(x.g(c),y.g(c)):
+//  x.t===name? c=>f(x.g(c),y): y.t===name? c=>f(x,y.g(c)): f(x,y);
+
+const res= (x,c)=> {while(x.t===prom)x=x.v(c); return x.t===name? x.g(c): x} // resolve
+const nap=(f,x,y,c=ctx)=> {
+  if(y===undefined) return x.t===name? {t:prom, v:c=>f(res(x, c))}: x.t===prom? f(res(x,c)): f(x);
+  else if(x.t===name&&y.t===name) return {t:prom, v:c=>f(x.g(c),y.g(c))};
+  else if(x.t===name) return y.t===prom? {t:prom, v:c=>f(x.g(c),res(y,c))}: {t:prom, v:c=>f(x.g(c),y)};
+  else if(y.t===name) return x.t===prom? {t:prom, v:c=>f(res(x,c),y.g(c))}: {t:prom, v:c=>f(x,y.g(c))};
+  else return x.t===prom&&y.t===prom? {t:prom, v:c=>f(res(x,c),res(y,c))}: f(x,y);
+}
 }
 
 Expr = Term / Proj / Dvb / e:Argl / _
