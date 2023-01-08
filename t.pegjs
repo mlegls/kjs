@@ -239,7 +239,7 @@ v=	x:V f:A+ {return {t:"drv", v:f.reduce((f,a)=>a(f), x[1])}}
 	/ V
 n=	f:(nt/v) v:("["e:E"]" {return e})+ {return {t:"argl", f, vs:sarr(v[0]), v:bapl(f,v)}}
 	/ "{"a:arg?v:E"}" {return {t:"lamd", a, v}}
-    / "("v:E")" {return sarr(v)??v}
+    / "("v:E")" {return v.tl? sarr(v): v.v}
     / N
 arg="["h:N t:(";"v:N {return v.v})*"]" {return [h.v,...t]}
 
