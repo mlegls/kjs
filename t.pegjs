@@ -69,8 +69,8 @@ const csc= f=> x=> {                                                            
   let a=f(x), r=[x,a], b; while(!eq(a,b)&&!eq(a,x)){b=a; a=f(a); r.push(a);}        //
   return r;                                                                         //
 }                                                                                   //
-const ecr= f=> y=> x=> y.map(e=>f(e,x));                                            // /:
-const ecl= f=> y=> x=> x.map(e=>f(e,y));                                            // \:
+const ecr= f=> x=> y=> vv(y).map(e=>bv(f,e,x));                                     // /:, +.../: in ngn/k
+const ecl= f=> y=> x=> vv(x).map(e=>bv(f,y,e));                                     // \:, +...\: in ngn/k
 const st= f=> n=> x=> x.reduce((a,_,i,r)=> i+n>r.length? a:                         // i f':
   a.concat([f(r.slice(i,i+n))]),[]);                                                //
 const wd= n=> x=> st(x=>x)(n)(x);                                                   // i':
@@ -222,6 +222,7 @@ const sarr= x=> {let r=[]; for(let i=0;!udfp(x.tl);i++)
 
 const bapl= (f,v)=> {
 	if (arrp(f)) return apl((x,y)=>udfp(y)?f[0](x):f[1](x,y),sarr(v[0]))
+    return apl(f, sarr(v[0]))
 }
 }
 P= 	a:(v:E Cmt?"\n" {return v})+ {return lst(a).v}
@@ -237,7 +238,12 @@ nt=	"{"(a:arg? {return a??["x","y","z"]})E"}"
 v=	x:V f:A+ {return {t:"drv", v:f.reduce((f,a)=>a(f), x[1])}}
 	/ x:nt f:A+ {return {t:"drv", f, x}}
 	/ V
-n=	f:(nt/v) v:("["e:E"]" {return e})+ {return {t:"argl", f, vs:sarr(v[0]), v:bapl(f,v)}}
+n=	"$" v:("["e:E"]" {return e})+ {return {t:"argl", f:"$", vs:sarr(v[0]), v:v}}
+	/ "." v:("["e:E"]" {return e})+ 
+    	{let ar=sarr(v[0]).length; let f=ar===4? dr2: ar===3? drl: vbs["."]; return bapl(f,v)}
+	/ "@" v:("["e:E"]" {return e})+ 
+    	{let ar=sarr(v[0]).length; let f=ar===4? am2: ar===3? amd: vbs["@"]; return bapl(f,v)}
+	/ f:(nt/v) v:("["e:E"]" {return e})+ {return {t:"argl", f, vs:sarr(v[0]), v:bapl(f,v)}}
 	/ "{"a:arg?v:E"}" {return {t:"lamd", a, v}}
     / "("v:E")" {return v.tl? sarr(v): v.v}
     / N
