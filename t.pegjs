@@ -1,9 +1,11 @@
+// k
 {
 // util
 const nump= x=> typeof x==='number'
 const strp= x=> typeof x==='string'
 const arrp= x=> Array.isArray(x)
 const funp= x=> typeof x==='function'
+
 const a= x=> null==x || !x.length || typeof x=="string";                            // atom?
 const b= x=> +x;                                                                    // bool to int
 const c= x=> typeof x=="string"? x.charCodeAt(0): x;                                // char arithmetic
@@ -18,7 +20,7 @@ const bv= (f,x,y)=>                                                             
   a(x)&&a(y)? f(x,y):                                                               //
     a(x)? y.map(n=>bv(f,x,n)):                                                      //
     a(y)? x.map(n=>bv(f,n,y)):                                                      //
-    // x.length==1? y.map(n=>bv(f,x[0],n)):   //unbased
+    // x.length==1? y.map(n=>bv(f,x[0],n)):   // unbased
     // y.length==1? x.map(n=>bv(f,n,y[0])):
     x.length==y.length? x.map((n,i)=>bv(f,n,y[i])):                                 //
     (()=> {throw new Error("length")})();                                           //
@@ -180,51 +182,88 @@ const vbs= {
     nump(y)&&arrp(x)? del(y,x): arrp(x)? cut(x,y): flt(x,y)],
   "$": [str,(x,y)=>nump(x)&&strp(y)?pad(x,y):cst(x,y)], 
   "?": [x=>nump(x)?uni(x):unq(x),(x,y)=>nump(x)? rnd(x,y): fnd(x,y)],
-  "@":[typ,cal], ".": [vls,(x,y)=>funp(x)?apl(x,y):get(x,y)],
+  "@": [typ,cal], ".": [vls,(x,y)=>funp(x)?apl(x,y):get(x,y)],
 }
 const advs = {
   "'": ec, "/": rd, "\\": sc, "/:": ecr, "\\:": ecl, "':": ecp
 }
-const ctx={}
-const name= Symbol("name")
 
-const tre= f=> {try {return f()} catch(e) {return f}}                         // try eval
-const nap= (f,x,y)=> y===undefined? x.t===name? c=>f(x.g(c)): 						// name apply
-	f(x): x.t===name&&y.t===name? c=>f(x.g(c),y.g(c)):
-  x.t===name? c=>f(x.g(c),y): y.t===name? c=>f(x,y.g(c)): f(x,y);
+const ctx={v:1};
+const lst= x=> x[x.length-1];
+const udfp= x=> x===undefined;
+const bd= x=> arrp(x)&&udfp(lst(x))? x.slice(0,-1): x
+const arrm= (h,t)=> arrp(t)? [h,...t]: [h,t];
+const atmz= x=> x.length===1? x[0]: x
+
+const name= Symbol("name")
+const exp= Symbol("exp")
+const asgn = Symbol(":")
+const namp= x=> x.t===name
+const expp= x=> x.t===exp
+const resp= x=> !namp(x)&&!expp(x) // resolved
+
+const gfn= (x,y)=> x.t=="vb"? vbs[x.v][y]:
+	x.t="e"? gfn(x.v, y): x;
+const tev2= (f,x,y)=> {
+	if (f===asgn) return ctx[x.v]=bd(y)
+	return resp(y)?
+	f.t==="drv"? f.v(x)(y): f[1](x,y):
+	{t:"dyad", f: (arrp(f)? f[1]: f.v), x, y:bd(y)}
+}
+const tev1= (f,x)=> {
+  if (f===asgn) return x
+  return resp(x)?
+  f.t==="drv"? f.v()(x): f[0](x):
+  {t:"monad", f: (arrp(f)? f[0]: f.v), x}
 }
 
-Expr = Term / Proj / Dvb / e:Argl / _
-Term = v:Mvb _? x:List {return nap(v,x)}
-	/ x:List _? v:Dvb _? y:List {return nap(v[1],x,y)}
-    / v:Dvb _? x:List {return nap(v[0],x)}
-    / Factor
-Factor= List / "(" _? expr:Expr _? ")" {return expr;} / Proj / Dvb
-Proj= l:Lamd a:Argl {return l(...a.filter(e=>e!==";"))}
-	/ Lamd
-Lamd= "{"a:Argl?b:Expr?"}" {a=a??[{v:"x"},{v:"y"},{v:"z"}]; return (...args)=>
-  {
-  	let sctx={}; 
-    a.filter(e=>e!==";").forEach((e,i)=>sctx[e.v]=args[i]);
-    let r=typeof b==="function"? b(sctx): b; return r;
-  }}
-Argl= "["e:ArglT*"]" {return e}
-ArglT= ";" / Expr
-Dvb= v:(Vb /Mvb) a:Adv {return [a(v[1])(),(x,y)=>a(v[1])(y)(x)]}
-	/ Vb / Mvb
-List= e:(Atom)+ {return e.length===1? e[0]: e}
-	/ Str 
-    / "("es:(Expr";")+l:Expr")" {return [...es.map(x=>x[0]), l]}
-Str= '"'v:([^"]/'""')*'"' {return v;}
-Atom= Null / Num / Char / Sym / Name
-Null= "0n" / "0N" {return null}
-Num= _? [0-9]+"."?[0-9]* {return +text();}
-Char= '"'v:.'"' {return v;}
-Sym= "`"v:([a-zA-Z]+/Str) {return v.join("");}
-Name= [a-zA-Z]+ {let n=text(); return ctx[n]??{t:name, v:n, g:c=>c[n]}}
-Mvb= v:Vb":" {return v[0];}
-Vb= [~!@#$%^&*_\-+=||<,>.?] {return vbs[text()];}
-Adv= [\\/']":"? {return advs[text()]}
-Comment= "/"[^\n]* {return}
-_ "whitespace" = [ \t\n\r]+ {return}
+}
+P= 	a:(v:E Cmt?"\n" {return v})+ {return lst(a).v}
+E= 	h:e ";" tl:E {return {t:";", h, tl}}
+	/ v:e {return {t:"e", v:bd(v)}} 
+e=	x:n _ f:v _ y:e {return tev2(f,x,y)}
+	/ h:n _ tl:e {return udfp(tl)? h: {t:"monad", h, tl}}
+	/ h:v _ tl:e {return udfp(tl)? h: tev1(h,tl)}
+    / _ {return undefined}
+nt=	"{"arg?E"}"
+	/"("v:E")" {return v}
+    /N // consuming
+v=	x:V f:A+ {return {t:"drv", v:f.reduce((f,a)=>a(f), x[1])}}
+	/ x:nt f:A+ {return {t:"drv", f, x}}
+	/ V
+n=	f:(nt/v) v:("["e:E"]" {return e})+ {return {t:"argl", f, v}}
+	/ "{"a:arg?v:E"}" {return {t:"lamd", a, v}}
+    / "("v:E")" {return {t:"paren", v}}
+    / N
+arg="["h:N t:(";"v:N {return v})*"]" {return {t:"largl", v:[h,...t]}}
+A=	v:(a:[/\'\\]!":" {return a} 
+	/ "':" / "/:" / "\\:") {return advs[v]}
+V=	v:V1":" {return v[0]} 
+	/ v:V1 {return strp(v)? vbs[v]: v} 
+    / ":" {return asgn}
+V1=	D":" {return {t:"opcode", v:text()}} 
+	/ v:[+\-*%!&|<>=~,^#_$?@.] {return vbs[v]}
+N=	Ss/St/Nms/Nums
+Nms=h:(v:Nm"." {return v})+t:Nms {return {t:".", x:h, y:t}} / Nm
+Nm=	L(L/D)* {let v=text(); return !udfp(ctx[v])? ctx[v]: {t:name, v}}
+St=	'"'e:Cs'"' {return bd(e)} 
+	/"0x"e:Bs {return bd(e)}
+Cs=	h:C t:Cs {return atmz(arrm(h,t))} 
+	/ _ {return undefined}
+C=	"\\0"/"\\t"/"\\r"/'\\"'/"\\\\"/[^"]
+Bs=	h:(H H {return parseInt(text(),16)}) t:Bs {return atmz(arrm(h,t))} 
+	/_ {return undefined}
+Ss=	h:S _ t:Ss {return arrm(h,t)} 
+	/ S
+S=	"`"v:(Nm {return text()}) {return {t:"sym", v}}
+	/ "`"v:St {v=v.join(""); return {t:"sym", v}}
+    / "`" {return {t:"sym", v:null}}
+Nums=h:Num _ t:Nums {return arrm(h,t)} 
+	/ Num 
+Num="-"?D!":"+"."?D*("e""-"?D+)? {return +text()}
 
+D=[0-9]
+H=D/[a-f]
+L=[A-Za-z]
+_=[ \t\r]* {return undefined}
+Cmt="/"[^\n]* {return undefined}
