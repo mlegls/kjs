@@ -69,8 +69,8 @@ const csc= f=> x=> {                                                            
   let a=f(x), r=[x,a], b; while(!eq(a,b)&&!eq(a,x)){b=a; a=f(a); r.push(a);}        //
   return r;                                                                         //
 }                                                                                   //
-const ecr= f=> x=> y=> vv(y).map(e=>bv(f,e,x));                                     // /:, +.../: in ngn/k
-const ecl= f=> y=> x=> vv(x).map(e=>bv(f,y,e));                                     // \:, +...\: in ngn/k
+const ecl= f=> y=> x=> y.map(e=>f(e,x));                                            // /:
+const ecr= f=> y=> x=> x.map(e=>f(y,e));                                           // \:
 const st= f=> n=> x=> x.reduce((a,_,i,r)=> i+n>r.length? a:                         // i f':
   a.concat([f(r.slice(i,i+n))]),[]);                                                //
 const wd= n=> x=> st(x=>x)(n)(x);                                                   // i':
@@ -91,7 +91,7 @@ const div= (x,y)=> bv((x,y)=>x/y, x, y);                                        
 const od= v=> cp(...vv(v).map(n => [...Array(n).keys()]));                          // !iI, would be +! in ngn/k
 const k= Object.keys;                                                               // !
 const d= (x,y)=> Object.fromEntries(x.map((k,i)=> [k,y[i]]));                       // !
-const dm= (x,y)=> x>0? y%x: Math.floor(y/x);                                        // i!I, div or mod
+const dm= (x,y)=> bv((x,y)=>x>0? y%x: Math.floor(y/x), x, y);                       // i!I, div or mod
 const wh= x=> [].concat(...vv(x).map((e,i)=> e.length? [wh(e)]: Array(e).fill(i))); // &
 const min= (x,y)=> bv((x,y)=>Math.min(x,y), x, y);                                  // &
 const rev= x=> vv(x).reverse();                                                     // |
@@ -175,7 +175,7 @@ const vbs= {
   "&": [wh, min], "|": [rev, max], "<": [asc, lt], ">": [dsc, gt],
   "~": [not, mch], ",": [enl, cat], 
   "=": [x=>nump(x)? umt(x): grp(x), eql],
-  "!": [x=>nump(x)||arrp(x)? od(x): k(x), (x,y)=>nump(x)&&nump(y)? dm(x,y): d(x,y)],
+  "!": [x=>nump(x)||arrp(x)? od(x): k(x), (x,y)=>nump(x)? dm(x,y): d(x,y)],
   "^": [nul,(x,y)=>arrp(x)&&arrp(y)? wo(x,y): fll(x,y)],
   "#": [l,(x,y)=>funp(x)? rep(x,y): arrp(x)||x>=0? rs(x,y): x<=0? tk(x,y): dtk(x,y)],
   "_": [x=>nump(x)? flr(x): lcs(x), (x,y)=> nump(x)&&arrp(y)? drp(x,y): 

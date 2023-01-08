@@ -63,8 +63,8 @@ const csc= f=> x=> {                                                            
   let a=f(x), r=[x,a], b; while(!eq(a,b)&&!eq(a,x)){b=a; a=f(a); r.push(a);}        //
   return r;                                                                         //
 }                                                                                   //
-const ecr= f=> y=> x=> y.map(e=>f(e,x));                                            // /:
-const ecl= f=> y => x=> x.map(e=>f(e,y));                                            // \:
+const ecl= f=> y=> x=> y.map(e=>f(e,x));                                            // /:
+const ecr= f=> y=> x=> x.map(e=>f(y,e));                                           // \:
 const st= f=> n=> x=> x.reduce((a,_,i,r)=> i+n>r.length? a:                         // i f':
   a.concat([f(r.slice(i,i+n))]),[]);                                                //
 const wd= n=> x=> st(x=>x)(n)(x);                                                   // i':
