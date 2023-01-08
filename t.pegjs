@@ -151,7 +151,7 @@ const rnd= (x,y)=> {                                                            
   } return r;                                                                       //
 }                                                                                   //
 const cal= (x,y)=> typeof x==="function"?x(y): x[y];                                // @
-const apl= (x,y)=> typeof x==="function"?x(...y): x(...y);                          // .
+const apl= (x,y)=> typeof x==="function"?x(...y): vv(y).map(e=>x[e]);               // .
 const vls= x=> Object.values(x);                                                    // .
 const get= (x,y)=> x[y];                                                            // .
 const typ= x=> typeof x;                                                            // .
@@ -217,6 +217,12 @@ const tev1= (f,x)=> {
   {t:"monad", f: (arrp(f)? f[0]: f.v), x}
 }
 
+const sarr= x=> {let r=[]; for(let i=0;!udfp(x.tl);i++)
+	r.push(x.h),(x=x.tl); return r.push(x.v),r;}
+
+const bapl= (f,v)=> {
+	if (arrp(f)) return apl((x,y)=>udfp(y)?f[0](x):f[1](x,y),sarr(v[0]))
+}
 }
 P= 	a:(v:E Cmt?"\n" {return v})+ {return lst(a).v}
 E= 	h:e ";" tl:E {return {t:";", h, tl}}
@@ -225,17 +231,18 @@ e=	x:n _ f:v _ y:e {return tev2(f,x,y)}
 	/ h:n _ tl:e {return udfp(tl)? h: {t:"monad", h, tl}}
 	/ h:v _ tl:e {return udfp(tl)? h: tev1(h,tl)}
     / _ {return undefined}
-nt=	"{"arg?E"}"
+nt=	"{"(a:arg? {return a??["x","y","z"]})E"}"
 	/"("v:E")" {return v}
     /N // consuming
 v=	x:V f:A+ {return {t:"drv", v:f.reduce((f,a)=>a(f), x[1])}}
 	/ x:nt f:A+ {return {t:"drv", f, x}}
 	/ V
-n=	f:(nt/v) v:("["e:E"]" {return e})+ {return {t:"argl", f, v}}
+n=	f:(nt/v) v:("["e:E"]" {return e})+ {return {t:"argl", f, vs:sarr(v[0]), v:bapl(f,v)}}
 	/ "{"a:arg?v:E"}" {return {t:"lamd", a, v}}
     / "("v:E")" {return {t:"paren", v}}
     / N
-arg="["h:N t:(";"v:N {return v})*"]" {return {t:"largl", v:[h,...t]}}
+arg="["h:N t:(";"v:N {return v.v})*"]" {return [h.v,...t]}
+
 A=	v:(a:[/\'\\]!":" {return a} 
 	/ "':" / "/:" / "\\:") {return advs[v]}
 V=	v:V1":" {return v[0]} 
@@ -243,7 +250,8 @@ V=	v:V1":" {return v[0]}
     / ":" {return asgn}
 V1=	D":" {return {t:"opcode", v:text()}} 
 	/ v:[+\-*%!&|<>=~,^#_$?@.] {return vbs[v]}
-N=	Ss/St/Nms/Nums
+
+N=	Ss/St/Nms/Ns
 Nms=h:(v:Nm"." {return v})+t:Nms {return {t:".", x:h, y:t}} / Nm
 Nm=	L(L/D)* {let v=text(); return !udfp(ctx[v])? ctx[v]: {t:name, v}}
 St=	'"'e:Cs'"' {return bd(e)} 
@@ -258,7 +266,7 @@ Ss=	h:S _ t:Ss {return arrm(h,t)}
 S=	"`"v:(Nm {return text()}) {return {t:"sym", v}}
 	/ "`"v:St {v=v.join(""); return {t:"sym", v}}
     / "`" {return {t:"sym", v:null}}
-Nums=h:Num _ t:Nums {return arrm(h,t)} 
+Ns=	h:Num _ t:Ns {return arrm(h,t)} 
 	/ Num 
 Num="-"?D!":"+"."?D*("e""-"?D+)? {return +text()}
 
@@ -267,3 +275,4 @@ H=D/[a-f]
 L=[A-Za-z]
 _=[ \t\r]* {return undefined}
 Cmt="/"[^\n]* {return undefined}
+
