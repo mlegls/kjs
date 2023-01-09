@@ -188,7 +188,7 @@ const advs = {
   "'": ec, "/": rd, "\\": sc, "/:": ecr, "\\:": ecl, "':": ecp
 }
 
-const ctx={v:1};
+const ctx={};
 const lst= x=> x[x.length-1];
 const udfp= x=> x===undefined;
 const bd= x=> arrp(x)&&udfp(lst(x))? x.slice(0,-1): x
@@ -200,21 +200,26 @@ const exp= Symbol("exp")
 const asgn = Symbol(":")
 const namp= x=> x.t===name
 const expp= x=> x.t===exp
-const resp= x=> !namp(x)&&!expp(x)                                                  // resolved
+const resp= x=> !namp(x)&&!expp(x)&&x.t!=="prm"                                        // resolved
 
 const gfn= (x,y)=> x.t=="vb"? vbs[x.v][y]:
-	x.t="e"? gfn(x.v, y): x;
-const tev2= (f,x,y)=> {
-	if (f===asgn) return ctx[x.v]=bd(y)
+	x.t="e"? gfn(x.v,y): x;
+const tev2= (f,x,y,c=ctx)=> {
+	if (f===asgn) return ctx[x.v]=bd(y);
+    x=resp(x)? x: c[x.v]??x;
+    y=resp(y)? y: c[y.v]??y;
 	return resp(y)?
 	f.t==="drv"? f.v(x)(y): f[1](x,y):
-	{t:"dyad", f: (arrp(f)? f[1]: f.v), x, y:bd(y)}
+    {t:"prm", r:(sc=>tev2(f,x,y,sc))}
+	// {t:"dyad", f: (arrp(f)? f[1]: f.v), x, y:bd(y)}
 }
-const tev1= (f,x)=> {
+const tev1= (f,x,c=ctx)=> {
   if (f===asgn) return x
+  x=resp(x)? x: c[x.v]??x;
   return resp(x)?
   f.t==="drv"? f.v()(x): f[0](x):
-  {t:"monad", f: (arrp(f)? f[0]: f.v), x}
+  {t:"prm", r:(sc=>tev1(f,x,sc))}
+  // {t:"monad", f: (arrp(f)? f[0]: f.v), x}
 }
 
 const sarr= x=> {let r=[]; for(let i=0;!udfp(x.tl);i++)
@@ -232,9 +237,12 @@ e=	x:n _ f:v _ y:e {return tev2(f,x,y)}
 	/ h:n _ tl:e {return udfp(tl)? h: {t:"monad", h, tl}}
 	/ h:v _ tl:e {return udfp(tl)? h: tev1(h,tl)}
     / _ {return undefined}
-nt=	"{"(a:arg? {return a??["x","y","z"]})E"}"
-	/"("v:E")" {return v}
-    /N                                                                              // consuming
+nt=	"{"al:(a:arg? {return a??["x","y","z"]})v:E"}" {return (...args)=>
+	  	{let sctx={}; al.forEach((e,i)=>sctx[e]=args[i]);
+    	let r=typeof v.v.r==="function"? v.v.r(sctx): v.v; return r;}
+	}
+	/ "("v:E")" {return v.tl? sarr(v): v.v}
+    / N                                                                             // consuming
 v=	x:V f:A+ {return {t:"drv", v:f.reduce((f,a)=>a(f), x[1])}}
 	/ x:nt f:A+ {return {t:"drv", f, x}}
 	/ V
@@ -244,9 +252,7 @@ n=	"$" v:("["e:E"]" {return e})+ {return {t:"argl", f:"$", vs:sarr(v[0]), v:v}}
 	/ "@" v:("["e:E"]" {return e})+ 
     	{let ar=sarr(v[0]).length; let f=ar===4? am2: ar===3? amd: vbs["@"]; return bapl(f,v)}
 	/ f:(nt/v) v:("["e:E"]" {return e})+ {return {t:"argl", f, vs:sarr(v[0]), v:bapl(f,v)}}
-	/ "{"a:arg?v:E"}" {return {t:"lamd", a, v}}
-    / "("v:E")" {return v.tl? sarr(v): v.v}
-    / N
+	/ nt
 arg="["h:N t:(";"v:N {return v.v})*"]" {return [h.v,...t]}
 
 A=	v:(a:[/\'\\]!":" {return a} 
@@ -281,4 +287,5 @@ H=D/[a-f]
 L=[A-Za-z]
 _=[ \t\r]* {return undefined}
 Cmt="/"[^\n]* {return undefined}
+
 
