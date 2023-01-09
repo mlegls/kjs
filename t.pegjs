@@ -20,8 +20,8 @@ const bv= (f,x,y)=>                                                             
   a(x)&&a(y)? f(x,y):                                                               //
     a(x)? y.map(n=>bv(f,x,n)):                                                      //
     a(y)? x.map(n=>bv(f,n,y)):                                                      //
-    // x.length==1? y.map(n=>bv(f,x[0],n)):   // unbased
-    // y.length==1? x.map(n=>bv(f,n,y[0])):
+                                                                                    // x.length==1? y.map(n=>bv(f,x[0],n)):   // unbased
+                                                                                    // y.length==1? x.map(n=>bv(f,n,y[0])):
     x.length==y.length? x.map((n,i)=>bv(f,n,y[i])):                                 //
     (()=> {throw new Error("length")})();                                           //
 const sv= (f,x)=>                                                                   // js string op
@@ -38,7 +38,7 @@ const eq= (x,y)=> x===y || !a(x) && x.length==y.length                          
 const fl= x=> a(x)? x: [].concat(...x.map(e=> a(e)? e: fl(e)));                     // flatten
 const z= (x,y)=> x.map((e,i)=> [e,y[i]]);                                           // zip
   
-// adverbs
+                                                                                    // adverbs
 const ec= f=> x=> x.map(f);                                                         // '
 const ec2= f=> y=> x=> x.map(e=>f(e,y));                                            // '
 const bin= x=> y=> bv1(e=>{                                                         // X'
@@ -70,21 +70,21 @@ const csc= f=> x=> {                                                            
   return r;                                                                         //
 }                                                                                   //
 const ecl= f=> y=> x=> y.map(e=>f(e,x));                                            // /:
-const ecr= f=> y=> x=> x.map(e=>f(y,e));                                           // \:
+const ecr= f=> y=> x=> x.map(e=>f(y,e));                                            // \:
 const st= f=> n=> x=> x.reduce((a,_,i,r)=> i+n>r.length? a:                         // i f':
   a.concat([f(r.slice(i,i+n))]),[]);                                                //
 const wd= n=> x=> st(x=>x)(n)(x);                                                   // i':
 const ecp= f=> y=> x=>                                                              // ':
   z(x, [y===undefined? null: y,...x]).map(e=>f(e[0],e[1]));
 
-// verbs
+                                                                                    // verbs
 const s= x=> x;                                                                     // ::
 const r= (x,y)=> y;                                                                 // :
 const flp= x=> t(vv2(x))                                                            // +
 const add= (x,y)=> bv((x,y)=>c(x)+c(y), x, y);                                      // +
 const neg= x=> bv1(x=>-x, x);                                                       // -
 const sub= (x,y)=> bv((x,y)=>c(x)-c(y), x, y);                                      // -
-const fst= x=> Array.isArray(x)? x[0]: x;                                                                // *
+const fst= x=> Array.isArray(x)? x[0]: x;                                           // *
 const mul= (x,y)=> bv((x,y)=>x*y, x, y);                                            // iI*iI, not defined for chars
 const srt= x=> bv1(x=>Math.sqrt(x), x)                                              // %
 const div= (x,y)=> bv((x,y)=>x/y, x, y);                                            // iI%iI, not defined for chars
@@ -98,7 +98,7 @@ const rev= x=> vv(x).reverse();                                                 
 const max= (x,y)=> bv((x,y)=>Math.max(x,y), x, y);                                  // |
 const asc= x=> [...vv(x).keys()].sort((a,b)=> cmp(x[a],x[b]));                      // <
 const lt= (x,y)=> bv((x,y)=>b(x<y), x, y);                                          // <
-// nyi file/web open & close
+                                                                                    // nyi file/web open & close
 const dsc= x=> [...vv(x).keys()].sort((a,b)=> -cmp(x[a],x[b]));                     // >
 const gt= (x,y)=> bv((x,y)=>b(x>y), x, y);                                          // >
 const umt= x=> [...Array(x).keys()]                                                 // =i, unit matrix
@@ -108,7 +108,7 @@ const eql= (x,y)=> bv((x,y)=>b(x===y), x, y);                                   
 const not= x=> bv1(x=>b(!x), x);                                                    // ~
 const mch= (x,y)=> b(eq(x,y));                                                      // ~
 const enl= x=> [x];                                                                 // ,
-const cat= (x,y)=> x.concat(y);                                                  // ,
+const cat= (x,y)=> x.concat(y);                                                     // ,
 const nul= x=> bv1(x=>b(null==x), x);                                               // ^
 const fll= (x,y)=> bv1(y=> null==y? x: y, y);                                       // ^
 const wo = (x,y)=> x.filter(e=> !vv(y).includes(e))                                 // ^
@@ -156,7 +156,7 @@ const vls= x=> Object.values(x);                                                
 const get= (x,y)=> x[y];                                                            // .
 const typ= x=> typeof x;                                                            // .
 
-// multi-adic
+                                                                                    // multi-adic
 const amd= (x,y,f)=> {let r=x.slice();r[y]=f(r[y]);return r}                        // @
 const am2= (x,y,f,z)=> {let r=x.slice();r[y]=f(r[y],z);return r}                    // @
 const drl= (x,y,f)=> {                                                              // .
@@ -200,7 +200,7 @@ const exp= Symbol("exp")
 const asgn = Symbol(":")
 const namp= x=> x.t===name
 const expp= x=> x.t===exp
-const resp= x=> !namp(x)&&!expp(x) // resolved
+const resp= x=> !namp(x)&&!expp(x)                                                  // resolved
 
 const gfn= (x,y)=> x.t=="vb"? vbs[x.v][y]:
 	x.t="e"? gfn(x.v, y): x;
@@ -234,7 +234,7 @@ e=	x:n _ f:v _ y:e {return tev2(f,x,y)}
     / _ {return undefined}
 nt=	"{"(a:arg? {return a??["x","y","z"]})E"}"
 	/"("v:E")" {return v}
-    /N // consuming
+    /N                                                                              // consuming
 v=	x:V f:A+ {return {t:"drv", v:f.reduce((f,a)=>a(f), x[1])}}
 	/ x:nt f:A+ {return {t:"drv", f, x}}
 	/ V

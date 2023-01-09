@@ -33,7 +33,7 @@ const z= (x,y)=> x.map((e,i)=> [e,y[i]]);                                       
 const trs= (fs,xs)=> {for(let i=0;i<fs.length-1;i++)
   {try{return fs[i](...xs)}catch(e){return e}}}
 
-// adverbs
+                                                                                    // adverbs
 const ec= f=> y=> x=> y===undefined? x.map(f): x.map(e=>f(e,y));                    // '
 const bin= x=> y=> bv1(e=>{                                                         // X'
   for(let i=0; i<x.length; i++){if(e<x[i])return i-1;} return x.length-1;           //
@@ -64,14 +64,14 @@ const csc= f=> x=> {                                                            
   return r;                                                                         //
 }                                                                                   //
 const ecl= f=> y=> x=> y.map(e=>f(e,x));                                            // /:
-const ecr= f=> y=> x=> x.map(e=>f(y,e));                                           // \:
+const ecr= f=> y=> x=> x.map(e=>f(y,e));                                            // \:
 const st= f=> n=> x=> x.reduce((a,_,i,r)=> i+n>r.length? a:                         // i f':
   a.concat([f(r.slice(i,i+n))]),[]);                                                //
 const wd= n=> x=> st(x=>x)(n)(x);                                                   // i':
 const ecp= f=> y=> x=>                                                              // ':
   z(x, [y===undefined? null: y,...x]).map(e=>f(e[0],e[1]));
 
-// verbs
+                                                                                    // verbs
 const s= x=> x;                                                                     // ::
 const r= (x,y)=> y;                                                                 // :
 const flp= x=> t(vv2(x))                                                            // +
@@ -92,7 +92,7 @@ const rev= x=> vv(x).reverse();                                                 
 const max= (x,y)=> bv((x,y)=>Math.max(x,y), x, y);                                  // |
 const asc= x=> [...vv(x).keys()].sort((a,b)=> cmp(x[a],x[b]));                      // <
 const lt= (x,y)=> bv((x,y)=>b(x<y), x, y);                                          // <
-// nyi file/web open & close
+                                                                                    // nyi file/web open & close
 const dsc= x=> [...vv(x).keys()].sort((a,b)=> -cmp(x[a],x[b]));                     // >
 const gt= (x,y)=> bv((x,y)=>b(x>y), x, y);                                          // >
 const umt= x=> [...Array(x).keys()]                                                 // =i, unit matrix
@@ -150,7 +150,7 @@ const apl= (x,y)=> typeof x==="function"?x(...y): x(...y);                      
 const vls= x=> Object.values(x);                                                    // .
 const get= (x,y)=> x[y];                                                            // .
 
-// multi-adic
+                                                                                    // multi-adic
 const amd= (x,y,f)=> {let r=x.slice();r[y]=f(r[y]);return r}                        // @
 const am2= (x,y,f,z)=> {let r=x.slice();r[y]=f(r[y],z);return r}                    // @
 const drl= (x,y,f)=> {                                                              // .
