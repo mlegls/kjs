@@ -198,6 +198,7 @@ const atmz= x=> x.length===1? x[0]: x
 const prm= Symbol("prm")
 const asgn = Symbol(":")
 const resp= x=> x.t!==prm   // resolved
+const res= (x,c)=> resp(x)? x: x.r(c)
 
 const gfn= (x,y)=> x.t=="vb"? vbs[x.v][y]:
 	x.t="e"? gfn(x.v,y): x;
@@ -206,32 +207,29 @@ const tev2= (f,x,y,c=ctx)=> {
     x=resp(x)? x: x.r(c)
     y=resp(y)? y: y.r(c)
 	return f.t==="drv"? f.v(x)(y): f[1](x,y)
-    // {t:prm, r:(sc=>tev2(f,x,y,sc))}
-	
 }
 const tev1= (f,x,c=ctx)=> {
   if (f===asgn) return x
   x=resp(x)? x: x.r(c)
   return f.t==="drv"? f.v()(x): f[0](x)
-  // {t:"monad", f: (arrp(f)? f[0]: f.v), x}
 }
 const sarr= x=> {let r=[]; for(let i=0;!udfp(x.tl);i++)
-	r.push(x.h),(x=x.tl); return r.push(x.v),r;}
+	r.push(x.h),(x=x.tl); return r.push(x),r;}
 const bapl= (f,v)=> {
 	if (arrp(f)) return apl((x,y)=>udfp(y)?f[0](x):f[1](x,y),sarr(v[0]))
     return apl(f, sarr(v[0]))
 }
 }
-P= 	a:(v:E Cmt?"\n" {return v})+ {return lst(a).v}
+P= 	a:(v:E Cmt?"\n" {return res(v,ctx)})+ {return lst(a)}
 E= 	h:e ";" tl:E {return {t:";", h, tl}}
-	/ v:e {return {t:"e", v:bd(v)}} 
-e=	x:n _ f:v _ y:e {return {t:prm, r:c=>tev2(f,x,y,c)}}
+	/ v:e {return bd(v)} 
+e=	x:n _ f:v _ y:e {return resp(x)&&resp(y)? tev2(f,x,y): {t:prm, r:c=>tev2(f,x,y,c)}}
 	/ h:n _ tl:e {return udfp(tl)? h: {t:"monad", h, tl}}
-	/ h:v _ tl:e {return udfp(tl)? h: {t:prm, r:c=>tev1(h,tl,c)}}
+	/ h:v _ tl:e {return udfp(tl)? h: resp(x)? tev1(f,x): {t:prm, r:c=>tev1(h,tl,c)}}
     / _ {return undefined}
 nt=	"{"al:(a:arg? {return a??["x","y","z"]})v:E"}" {return (...args)=>
 	  	{let sctx={}; al.forEach((e,i)=>sctx[e]=args[i]);
-    	return resp(v.v)? v.v: v.v.r(sctx)}
+    	return resp(v)? v: v.r(sctx)}
 	}
 	/ "("v:E")" {return v.tl? sarr(v): v.v}
     / N                                                                             // consuming
@@ -276,3 +274,5 @@ H=D/[a-f]
 L=[A-Za-z]
 _=[ \t\r]* {return undefined}
 Cmt="/"[^\n]* {return undefined}
+
+
