@@ -169,6 +169,11 @@ const dr2= (x,y,f,z)=> {                                                        
 }                                                                                   //
 const tr= (f,y,g)=> {try {return f(y)} catch(e) {return g(e)}}                      // .
 const spl= (x,y,z)=> x.slice(0,y[0]).concat(z).concat(x.slice(y[1]))                // ?
+const cond= x=> {                                                                   // $
+  for (let i=0; i<x.length-1; i+=2) {
+    if (x[i]) return x[i+1]
+  } return x.length%2? x[x.length-1]: null;
+}
 
 const vbs= {
   "+": [flp, add], "-": [neg, sub], "*": [fst, mul], "%": [srt, div],
@@ -197,7 +202,7 @@ const atmz= x=> x.length===1? x[0]: x
 
 const prm= Symbol("prm")
 const asgn = Symbol(":")
-const resp= x=> x.t!==prm   // resolved
+const resp= x=> x==null||x.t!==prm   // resolved
 const res= (x,c)=> resp(x)? x: x.r(c)
 
 const gfn= (x,y)=> x.t=="vb"? vbs[x.v][y]:
@@ -236,7 +241,8 @@ nt=	"{"al:(a:arg? {return a??["x","y","z"]})v:E"}" {return (...args)=>
 v=	x:V f:A+ {return {t:"drv", v:f.reduce((f,a)=>a(f), x[1])}}
 	/ x:nt f:A+ {return {t:"drv", f, x}}
 	/ V
-n=	"$" v:("["e:E"]" {return e})+ {return {t:"argl", f:"$", vs:sarr(v[0]), v:v}}
+n=	"$" v:("["e:E"]" {return e})+ 
+		{return cond(sarr(v[0]))}
 	/ "." v:("["e:E"]" {return e})+ 
     	{let ar=sarr(v[0]).length; let f=ar===4? dr2: ar===3? drl: vbs["."]; return bapl(f,v)}
 	/ "@" v:("["e:E"]" {return e})+ 
