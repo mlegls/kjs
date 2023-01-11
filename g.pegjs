@@ -1,9 +1,11 @@
+// k
 {
 // util
 const nump= x=> typeof x==='number'
 const strp= x=> typeof x==='string'
 const arrp= x=> Array.isArray(x)
 const funp= x=> typeof x==='function'
+
 const a= x=> null==x || !x.length || typeof x=="string";                            // atom?
 const b= x=> +x;                                                                    // bool to int
 const c= x=> typeof x=="string"? x.charCodeAt(0): x;                                // char arithmetic
@@ -18,8 +20,8 @@ const bv= (f,x,y)=>                                                             
   a(x)&&a(y)? f(x,y):                                                               //
     a(x)? y.map(n=>bv(f,x,n)):                                                      //
     a(y)? x.map(n=>bv(f,n,y)):                                                      //
-    // x.length==1? y.map(n=>bv(f,x[0],n)):   //unbased
-    // y.length==1? x.map(n=>bv(f,n,y[0])):
+                                                                                    // x.length==1? y.map(n=>bv(f,x[0],n)):   // unbased
+                                                                                    // y.length==1? x.map(n=>bv(f,n,y[0])):
     x.length==y.length? x.map((n,i)=>bv(f,n,y[i])):                                 //
     (()=> {throw new Error("length")})();                                           //
 const sv= (f,x)=>                                                                   // js string op
@@ -36,7 +38,7 @@ const eq= (x,y)=> x===y || !a(x) && x.length==y.length                          
 const fl= x=> a(x)? x: [].concat(...x.map(e=> a(e)? e: fl(e)));                     // flatten
 const z= (x,y)=> x.map((e,i)=> [e,y[i]]);                                           // zip
   
-// adverbs
+                                                                                    // adverbs
 const ec= f=> x=> x.map(f);                                                         // '
 const ec2= f=> y=> x=> x.map(e=>f(e,y));                                            // '
 const bin= x=> y=> bv1(e=>{                                                         // X'
@@ -67,36 +69,36 @@ const csc= f=> x=> {                                                            
   let a=f(x), r=[x,a], b; while(!eq(a,b)&&!eq(a,x)){b=a; a=f(a); r.push(a);}        //
   return r;                                                                         //
 }                                                                                   //
-const ecr= f=> y=> x=> y.map(e=>f(e,x));                                            // /:
-const ecl= f=> y=> x=> x.map(e=>f(e,y));                                            // \:
+const ecl= f=> y=> x=> y.map(e=>f(e,x));                                            // /:
+const ecr= f=> y=> x=> x.map(e=>f(y,e));                                            // \:
 const st= f=> n=> x=> x.reduce((a,_,i,r)=> i+n>r.length? a:                         // i f':
   a.concat([f(r.slice(i,i+n))]),[]);                                                //
 const wd= n=> x=> st(x=>x)(n)(x);                                                   // i':
 const ecp= f=> y=> x=>                                                              // ':
   z(x, [y===undefined? null: y,...x]).map(e=>f(e[0],e[1]));
 
-// verbs
+                                                                                    // verbs
 const s= x=> x;                                                                     // ::
 const r= (x,y)=> y;                                                                 // :
 const flp= x=> t(vv2(x))                                                            // +
 const add= (x,y)=> bv((x,y)=>c(x)+c(y), x, y);                                      // +
 const neg= x=> bv1(x=>-x, x);                                                       // -
 const sub= (x,y)=> bv((x,y)=>c(x)-c(y), x, y);                                      // -
-const fst= x=> Array.isArray(x)? x[0]: x;                                                                // *
+const fst= x=> Array.isArray(x)? x[0]: x;                                           // *
 const mul= (x,y)=> bv((x,y)=>x*y, x, y);                                            // iI*iI, not defined for chars
 const srt= x=> bv1(x=>Math.sqrt(x), x)                                              // %
 const div= (x,y)=> bv((x,y)=>x/y, x, y);                                            // iI%iI, not defined for chars
 const od= v=> cp(...vv(v).map(n => [...Array(n).keys()]));                          // !iI, would be +! in ngn/k
 const k= Object.keys;                                                               // !
 const d= (x,y)=> Object.fromEntries(x.map((k,i)=> [k,y[i]]));                       // !
-const dm= (x,y)=> x>0? y%x: Math.floor(y/x);                                        // i!I, div or mod
+const dm= (x,y)=> bv((x,y)=>x>0? y%x: Math.floor(y/x), x, y);                       // i!I, div or mod
 const wh= x=> [].concat(...vv(x).map((e,i)=> e.length? [wh(e)]: Array(e).fill(i))); // &
 const min= (x,y)=> bv((x,y)=>Math.min(x,y), x, y);                                  // &
 const rev= x=> vv(x).reverse();                                                     // |
 const max= (x,y)=> bv((x,y)=>Math.max(x,y), x, y);                                  // |
 const asc= x=> [...vv(x).keys()].sort((a,b)=> cmp(x[a],x[b]));                      // <
 const lt= (x,y)=> bv((x,y)=>b(x<y), x, y);                                          // <
-// nyi file/web open & close
+                                                                                    // nyi file/web open & close
 const dsc= x=> [...vv(x).keys()].sort((a,b)=> -cmp(x[a],x[b]));                     // >
 const gt= (x,y)=> bv((x,y)=>b(x>y), x, y);                                          // >
 const umt= x=> [...Array(x).keys()]                                                 // =i, unit matrix
@@ -106,7 +108,7 @@ const eql= (x,y)=> bv((x,y)=>b(x===y), x, y);                                   
 const not= x=> bv1(x=>b(!x), x);                                                    // ~
 const mch= (x,y)=> b(eq(x,y));                                                      // ~
 const enl= x=> [x];                                                                 // ,
-const cat= (x,y)=> x.concat(y);                                                  // ,
+const cat= (x,y)=> x.concat(y);                                                     // ,
 const nul= x=> bv1(x=>b(null==x), x);                                               // ^
 const fll= (x,y)=> bv1(y=> null==y? x: y, y);                                       // ^
 const wo = (x,y)=> x.filter(e=> !vv(y).includes(e))                                 // ^
@@ -149,12 +151,12 @@ const rnd= (x,y)=> {                                                            
   } return r;                                                                       //
 }                                                                                   //
 const cal= (x,y)=> typeof x==="function"?x(y): x[y];                                // @
-const apl= (x,y)=> typeof x==="function"?x(...y): x(...y);                          // .
+const apl= (x,y)=> typeof x==="function"?x(...y): vv(y).map(e=>x[e]);               // .
 const vls= x=> Object.values(x);                                                    // .
 const get= (x,y)=> x[y];                                                            // .
 const typ= x=> typeof x;                                                            // .
 
-// multi-adic
+                                                                                    // multi-adic
 const amd= (x,y,f)=> {let r=x.slice();r[y]=f(r[y]);return r}                        // @
 const am2= (x,y,f,z)=> {let r=x.slice();r[y]=f(r[y],z);return r}                    // @
 const drl= (x,y,f)=> {                                                              // .
@@ -167,64 +169,112 @@ const dr2= (x,y,f,z)=> {                                                        
 }                                                                                   //
 const tr= (f,y,g)=> {try {return f(y)} catch(e) {return g(e)}}                      // .
 const spl= (x,y,z)=> x.slice(0,y[0]).concat(z).concat(x.slice(y[1]))                // ?
+const cond= x=> {                                                                   // $
+  for (let i=0; i<x.length-1; i+=2) {
+    if (x[i]) return x[i+1]
+  } return x.length%2? x[x.length-1]: null;
+}
 
 const vbs= {
   "+": [flp, add], "-": [neg, sub], "*": [fst, mul], "%": [srt, div],
   "&": [wh, min], "|": [rev, max], "<": [asc, lt], ">": [dsc, gt],
   "~": [not, mch], ",": [enl, cat], 
   "=": [x=>nump(x)? umt(x): grp(x), eql],
-  "!": [x=>nump(x)||arrp(x)? od(x): k(x), (x,y)=>nump(x)&&nump(y)? dm(x,y): d(x,y)],
+  "!": [x=>nump(x)||arrp(x)? od(x): k(x), (x,y)=>nump(x)? dm(x,y): d(x,y)],
   "^": [nul,(x,y)=>arrp(x)&&arrp(y)? wo(x,y): fll(x,y)],
   "#": [l,(x,y)=>funp(x)? rep(x,y): arrp(x)||x>=0? rs(x,y): x<=0? tk(x,y): dtk(x,y)],
   "_": [x=>nump(x)? flr(x): lcs(x), (x,y)=> nump(x)&&arrp(y)? drp(x,y): 
     nump(y)&&arrp(x)? del(y,x): arrp(x)? cut(x,y): flt(x,y)],
   "$": [str,(x,y)=>nump(x)&&strp(y)?pad(x,y):cst(x,y)], 
   "?": [x=>nump(x)?uni(x):unq(x),(x,y)=>nump(x)? rnd(x,y): fnd(x,y)],
-  "@":[typ,cal], ".": [vls,(x,y)=>funp(x)?apl(x,y):get(x,y)],
+  "@": [typ,cal], ".": [vls,(x,y)=>funp(x)?apl(x,y):get(x,y)],
 }
 const advs = {
   "'": ec, "/": rd, "\\": sc, "/:": ecr, "\\:": ecl, "':": ecp
 }
-const ctx={}
-const name= Symbol("name")
 
-const tre= f=> {try {return f()} catch(e) {return f}}                         // try eval
-const nap= (f,x,y)=> y===undefined? x.t===name? c=>f(x.g(c)): 						// name apply
-	f(x): x.t===name&&y.t===name? c=>f(x.g(c),y.g(c)):
-  x.t===name? c=>f(x.g(c),y): y.t===name? c=>f(x,y.g(c)): f(x,y);
+const ctx={};
+const lst= x=> x[x.length-1];
+const udfp= x=> x===undefined;
+const bd= x=> arrp(x)&&udfp(lst(x))? x.slice(0,-1): x
+const arrm= (h,t)=> arrp(t)? [h,...t]: [h,t];
+const atmz= x=> x.length===1? x[0]: x
+
+const prm= Symbol("prm")
+const asgn = Symbol(":")
+const resp= x=> x==null||x.t!==prm   // resolved
+const res= (x,c)=> resp(x)? x: x.r(c)
+
+const tev2= (f,x,y,c=ctx)=> {
+	if (f===asgn) {c[x.v]=bd(y); return bd(y)};
+    x=resp(x)? x: x.r(c)
+    y=resp(y)? y: y.r(c)
+	return f.t==="drv"? f.v(x)(y): f[1](x,y)
 }
-
-Expr = Term / Proj / Dvb / e:Argl / _
-Term = v:Mvb _? x:List {return nap(v,x)}
-	/ x:List _? v:Dvb _? y:List {return nap(v[1],x,y)}
-    / v:Dvb _? x:List {return nap(v[0],x)}
-    / Factor
-Factor= List / "(" _? expr:Expr _? ")" {return expr;} / Proj / Dvb
-Proj= l:Lamd a:Argl {return l(...a.filter(e=>e!==";"))}
-	/ Lamd
-Lamd= "{"a:Argl?b:Expr?"}" {a=a??[{v:"x"},{v:"y"},{v:"z"}]; return (...args)=>
-  {
-  	let sctx={}; 
-    a.filter(e=>e!==";").forEach((e,i)=>sctx[e.v]=args[i]);
-    let r=typeof b==="function"? b(sctx): b; return r;
-  }}
-Argl= "["e:ArglT*"]" {return e}
-ArglT= ";" / Expr
-Dvb= v:(Vb /Mvb) a:Adv {return [a(v[1])(),(x,y)=>a(v[1])(y)(x)]}
-	/ Vb / Mvb
-List= e:(Atom)+ {return e.length===1? e[0]: e}
-	/ Str 
-    / "("es:(Expr";")+l:Expr")" {return [...es.map(x=>x[0]), l]}
-Str= '"'v:([^"]/'""')*'"' {return v;}
-Atom= Null / Num / Char / Sym / Name
-Null= "0n" / "0N" {return null}
-Num= _? [0-9]+"."?[0-9]* {return +text();}
-Char= '"'v:.'"' {return v;}
-Sym= "`"v:([a-zA-Z]+/Str) {return v.join("");}
-Name= [a-zA-Z]+ {let n=text(); return ctx[n]??{t:name, v:n, g:c=>c[n]}}
-Mvb= v:Vb":" {return v[0];}
-Vb= [~!@#$%^&*_\-+=||<,>.?] {return vbs[text()];}
-Adv= [\\/']":"? {return advs[text()]}
-Comment= "/"[^\n]* {return}
-_ "whitespace" = [ \t\n\r]+ {return}
-
+const tev1= (f,x,c=ctx)=> {
+  if (f===asgn) return x
+  x=resp(x)? x: x.r(c)
+  return f.t==="drv"? f.v()(x): f[0](x)
+}
+const sarr= x=> {let r=[]; for(let i=0;!udfp(x.tl);i++)
+	r.push(x.h),(x=x.tl); return r.push(x),r;}
+const bapl= (f,v)=> {
+	if (arrp(f)) return apl((x,y)=>udfp(y)?f[0](x):f[1](x,y),sarr(v[0]))
+    return apl(f, sarr(v[0]))
+}
+}
+P= 	a:(v:E Cmt?"\n" {return res(v,ctx)})+ {return lst(a)}
+E= 	h:e ";" tl:E {return {t:";", h, tl}}
+	/ v:e {return bd(v)} 
+e=	x:n _ f:v _ y:e {return resp(x)&&resp(y)? tev2(f,x,y): {t:prm, r:c=>tev2(f,x,y,c)}}
+	/ h:n _ tl:e {return udfp(tl)? h: {t:"monad", h, tl}}
+	/ h:v _ tl:e {return udfp(tl)? h: resp(x)? tev1(f,x): {t:prm, r:c=>tev1(h,tl,c)}}
+    / _ {return undefined}
+nt=	"{"al:(a:arg? {return a??["x","y","z"]})v:E"}" {return (...args)=>
+	  	{let sctx={}; al.forEach((e,i)=>sctx[e]=args[i]);
+    	return resp(v)? v: v.r(sctx)}
+	}
+	/ "("v:E")" {return v.tl? sarr(v): v.v}
+    / N                                                                             // consuming
+v=	x:V f:A+ {return {t:"drv", v:f.reduce((f,a)=>a(f), x[1])}}
+	/ x:nt f:A+ {return {t:"drv", f, x}}
+	/ V
+n=	"$" v:("["e:E"]" {return e})+ 
+		{return cond(sarr(v[0]))}
+	/ "." v:("["e:E"]" {return e})+ 
+    	{let ar=sarr(v[0]).length; let f=ar===4? dr2: ar===3? drl: vbs["."]; return bapl(f,v)}
+	/ "@" v:("["e:E"]" {return e})+ 
+    	{let ar=sarr(v[0]).length; let f=ar===4? am2: ar===3? amd: vbs["@"]; return bapl(f,v)}
+	/ f:(nt/v) v:("["e:E"]" {return e})+ {return {t:"argl", f, vs:sarr(v[0]), v:bapl(f,v)}}
+	/ nt
+arg="["h:N t:(";"v:N {return v.v})*"]" {return [h.v,...t]}
+A=	v:(a:[/\'\\]!":" {return a} 
+	/ "':" / "/:" / "\\:") {return advs[v]}
+V=	v:V1":" {return v[0]} 
+	/ v:V1 {return strp(v)? vbs[v]: v} 
+    / ":" {return asgn}
+V1=	D":" {return {t:"opcode", v:text()}} 
+	/ v:[+\-*%!&|<>=~,^#_$?@.] {return vbs[v]}
+N=	Ss/St/Nms/Ns
+Nms=h:(v:Nm"." {return v})+t:Nms {return {t:".", x:h, y:t}} / Nm
+Nm=	L(L/D)* {let v=text(); return !udfp(ctx[v])? ctx[v]: {t:prm, r:c=>c[v], v}}
+St=	'"'e:Cs'"' {return bd(e)} 
+	/"0x"e:Bs {return bd(e)}
+Cs=	h:C t:Cs {return atmz(arrm(h,t))} 
+	/ _ {return undefined}
+C=	"\\0"/"\\t"/"\\r"/'\\"'/"\\\\"/[^"]
+Bs=	h:(H H {return parseInt(text(),16)}) t:Bs {return atmz(arrm(h,t))} 
+	/_ {return undefined}
+Ss=	h:S _ t:Ss {return arrm(h,t)} 
+	/ S
+S=	"`"v:(Nm {return text()}) {return {t:"sym", v}}
+	/ "`"v:St {v=v.join(""); return {t:"sym", v}}
+    / "`" {return {t:"sym", v:null}}
+Ns=	h:Num _ t:Ns {return arrm(h,t)} 
+	/ Num 
+Num="-"?D!":"+"."?D*("e""-"?D+)? {return +text()}
+D=[0-9]
+H=D/[a-f]
+L=[A-Za-z]
+_=[ \t\r]* {return undefined}
+Cmt="/"[^\n]* {return undefined}
